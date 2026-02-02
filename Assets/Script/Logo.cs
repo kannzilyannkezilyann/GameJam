@@ -24,15 +24,16 @@ public class Logo : MonoBehaviour
 // データメンバの宣言 -----------------------------------------------
 
     //遷移先のシーン
-    [SerializeField] SceneAsset scene;
+    [SerializeField] SceneAsset m_scene;
     //表示するロゴ
-    [SerializeField] Sprite[] logoSprites;
+    [SerializeField] Sprite[] m_logoSprites;
     //表示するためのスプライト
-    SpriteRenderer SpriteRenderer;
-    Color color;
-    private float duration = 1.5f;
-    int index = 0;
-    int fade = 1;
+    SpriteRenderer m_spriteRenderer;
+    Color m_color;
+    private float m_duration = 1.5f;
+    private int m_index = 0;
+    //フェード状態
+    private int m_fade = START_FADE_IN;
 
 // メンバ関数の定義 -------------------------------------------------
     /**
@@ -47,13 +48,13 @@ public class Logo : MonoBehaviour
         //FPS設定
         Application.targetFrameRate = 60;
         //表示するためのスプライト
-        SpriteRenderer = GetComponent<SpriteRenderer>();
+        m_spriteRenderer = GetComponent<SpriteRenderer>();
         //始めに表示するロゴ
-        SpriteRenderer.sprite = logoSprites[index];
+        m_spriteRenderer.sprite = m_logoSprites[m_index];
         //スプライトの色
-        color = SpriteRenderer.color;
+        m_color = m_spriteRenderer.color;
         //透明にする
-        color.a = 0;
+        m_color.a = 0;
     }
 
     /**
@@ -68,29 +69,29 @@ public class Logo : MonoBehaviour
         //スキップ
         if (Input.GetMouseButtonDown(0)) 
         {
-            color.a = fade;
-            SpriteRenderer.color = color;
+            m_color.a = m_fade;
+            m_spriteRenderer.color = m_color;
         }
 
-        if (Fade(fade))
+        if (Fade(m_fade))
         {
-            if (fade == START_FADE_IN)
+            if (m_fade == START_FADE_IN)
             {
-                fade = START_FADE_OUT;
+                m_fade = START_FADE_OUT;
             }
-            else if (fade == START_FADE_OUT)
+            else if (m_fade == START_FADE_OUT)
             {
-                index++;
+                m_index++;
                 //次のロゴを表示
-                if (index < logoSprites.Length)
+                if (m_index < m_logoSprites.Length)
                 {
-                    SpriteRenderer.sprite = logoSprites[index];
-                    fade = START_FADE_IN;
+                    m_spriteRenderer.sprite = m_logoSprites[m_index];
+                    m_fade = START_FADE_IN;
                 }
                 else
                 {
                     //すべてのロゴが表示し終えたら遷移
-                    SceneManager.LoadScene(scene.name);
+                    SceneManager.LoadScene(m_scene.name);
                 }
 
             }
@@ -107,11 +108,11 @@ public class Logo : MonoBehaviour
      */
     private bool Fade(float targetAlpha)
     {
-        if (!Mathf.Approximately(color.a, targetAlpha))
+        if (!Mathf.Approximately(m_color.a, targetAlpha))
         {
-            float changePerFrame = Time.deltaTime / duration;
-            color.a = Mathf.MoveTowards(color.a, targetAlpha, changePerFrame);
-            SpriteRenderer.color = color;
+            float changePerFrame = Time.deltaTime / m_duration;
+            m_color.a = Mathf.MoveTowards(m_color.a, targetAlpha, changePerFrame);
+            m_spriteRenderer.color = m_color;
             return false;
         }
         else
