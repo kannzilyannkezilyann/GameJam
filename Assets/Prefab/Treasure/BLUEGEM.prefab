@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2156794698193076289}
   - component: {fileID: 8974344877301093822}
   m_Layer: 0
-  m_Name: BLUEGEM
+  m_Name: BlueGem
   m_TagString: Treasure
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
