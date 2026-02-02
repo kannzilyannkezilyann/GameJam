@@ -77,6 +77,15 @@ public class Treasure : MonoBehaviour
         {
             //エフェクト生成
             Instantiate(m_destroyEffect, gameObject.transform.position, Quaternion.identity);
+
+            //プレイヤーに重量とスコアを渡す
+            PlayerScript player = collision.gameObject.GetComponent<PlayerScript>();
+            if (player != null) 
+            {
+                player.AddMass(m_weight);
+                player.AddScore(m_score);
+            }
+            
             //消去
             Destroy(gameObject);
         }
