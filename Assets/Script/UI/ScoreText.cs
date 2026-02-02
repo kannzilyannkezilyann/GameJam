@@ -13,7 +13,7 @@ using TMPro;
 using UnityEngine;
 // クラスの定義 ===============================================================
 /**
-  * @brief 重量表示
+  * @brief スコア表示
   */
 public class ScoreText : MonoBehaviour
 {
