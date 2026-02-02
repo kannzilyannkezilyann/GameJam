@@ -9,7 +9,9 @@
  */
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 // クラスの定義 ===============================================================
 /**
   * @brief 宝
@@ -18,15 +20,15 @@ public class Treasure : MonoBehaviour
 {
 // データメンバの宣言 -----------------------------------------------
     //重量
-    [SerializeField] private float m_weight;
+    [SerializeField] private float m_weight = 50;
     //加算スコア
-    [SerializeField] private int m_score;
-    ////スプライト
-    //[SerializeField] private Sprite m_sprite;
-    ////アニメーション
-    //[SerializeField] private AnimationClip m_clip;
+    [SerializeField] private int m_score = 1;
     //消滅エフェクト
     [SerializeField] private GameObject m_destroyEffect;
+    //消滅エフェクトサイズ
+    [SerializeField] private float m_destroyEffectScale = 5.0f;
+    //スコア表示テキスト
+    [SerializeField] GameObject m_scoreText;
     // メンバ関数の定義 -------------------------------------------------
     /**
      * @brief 初期化処理
@@ -37,17 +39,7 @@ public class Treasure : MonoBehaviour
      */
     void Start()
     {
-        ////スプライト設定
-        //SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-        //spriteRenderer.sprite = m_sprite;
-        ////アニメーション設定
-        //Animator animator = GetComponent<Animator>();
-        ////animator.runtimeAnimatorController = m_clip;
-        //    var overrideController = new AnimatorOverrideController(animator.runtimeAnimatorController);
-        //animator.runtimeAnimatorController = overrideController;
-
-        //// "BaseClip" は Animator Controller 側に設定してある元のClip名
-        //overrideController["BaseClip"] = newClip;
+       
     }
 
     /**
@@ -76,14 +68,26 @@ public class Treasure : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             //エフェクト生成
-            Instantiate(m_destroyEffect, gameObject.transform.position, Quaternion.identity);
-
+            GameObject effect = Instantiate(m_destroyEffect, gameObject.transform.position, Quaternion.identity);
+            //エフェクトの大きさを調整
+            float scaleX = this.transform.localScale.x * m_destroyEffectScale;
+            float scaleY = this.transform.localScale.y * m_destroyEffectScale;
+            float scaleZ = this.transform.localScale.z * m_destroyEffectScale;
+            effect.transform.localScale = new Vector3(scaleX,scaleY,scaleZ);
             //プレイヤーに重量とスコアを渡す
             PlayerScript player = collision.gameObject.GetComponent<PlayerScript>();
             if (player != null) 
             {
                 player.AddMass(m_weight);
                 player.AddScore(m_score);
+
+                //スコア表示
+                GameObject text = Instantiate(m_scoreText, transform.position, Quaternion.identity);
+                ScorePopUp scorePopUp = text.GetComponent<ScorePopUp>();
+                if(scorePopUp != null)
+                {
+                    scorePopUp.SetUp(m_score);
+                }
             }
             
             //消去
