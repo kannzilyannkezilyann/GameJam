@@ -152,7 +152,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Takato_Logo_0: 4798243980687864409
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

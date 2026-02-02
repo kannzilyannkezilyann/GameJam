@@ -488,7 +488,22 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Fukaya_Logo_0: -8006477838760958662
+      Fukaya_Logo_1: 5069014651379420260
+      Fukaya_Logo_10: 604078426247552324
+      Fukaya_Logo_11: 3468816745397511098
+      Fukaya_Logo_12: -1625111221687301227
+      Fukaya_Logo_13: -2151163552437284017
+      Fukaya_Logo_14: 6554222155092223930
+      Fukaya_Logo_2: -5873125024257913878
+      Fukaya_Logo_3: 3454237728349848841
+      Fukaya_Logo_4: -7733974275343114295
+      Fukaya_Logo_5: -5152540241120604453
+      Fukaya_Logo_6: 1078066406123197049
+      Fukaya_Logo_7: 5560099258532227573
+      Fukaya_Logo_8: -2196042244254935302
+      Fukaya_Logo_9: -3875512372113598533
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
