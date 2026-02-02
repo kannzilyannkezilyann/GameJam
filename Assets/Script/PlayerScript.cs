@@ -1,9 +1,24 @@
-﻿using UnityEngine;
+﻿/**
+ * @file   PlayerScript.cs
+ *
+ * @brief  プレイヤーに関するヘッダファイル
+ *
+ * @author 制作者名　FUKAYA
+ *
+ * @date   日付　2026/02/02
+ */
+using UnityEngine;
 using System.Collections;
 
-public class PlayerScript : MonoBehaviour {
-
+public class PlayerScript : MonoBehaviour 
+{
+// クラス定数の宣言 -------------------------------------------------
+    //プレイヤーの重さ
+    public const float PLAYER_WIEGHT = 100.0f;
+// データメンバの宣言 -----------------------------------------------
+    //現在の重さ
     float m_mass = 100.0f;
+    //合計スコア
     int m_score = 0;
 
     [SerializeField] float      m_speed = 4.0f;
