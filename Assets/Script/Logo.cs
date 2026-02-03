@@ -55,6 +55,8 @@ public class Logo : MonoBehaviour
         m_color = m_spriteRenderer.color;
         //透明にする
         m_color.a = 0;
+
+        SpriteScaling();
     }
 
     /**
@@ -85,8 +87,11 @@ public class Logo : MonoBehaviour
                 //次のロゴを表示
                 if (m_index < m_logoSprites.Length)
                 {
+
+
                     m_spriteRenderer.sprite = m_logoSprites[m_index];
                     m_fade = START_FADE_IN;
+                    SpriteScaling();
                 }
                 else
                 {
@@ -121,5 +126,28 @@ public class Logo : MonoBehaviour
         }
 
     }
+    /**
+     * @brief スプライトのサイズ調整
+     *
+     * @param[in] なし
+     *
+     * @return なし
+     */
+    private void SpriteScaling()
+    {
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
 
+        Camera cam = Camera.main;
+        float screenHeight = cam.orthographicSize * 2f;
+        float screenWidth = screenHeight * cam.aspect;
+
+        Vector2 spriteSize = sr.sprite.bounds.size;
+
+        transform.localScale = new Vector3(
+            screenWidth / spriteSize.x,
+            screenHeight / spriteSize.y,
+            1f
+        );
+
+    }
 }

@@ -1,10 +1,37 @@
-﻿using UnityEngine;
+﻿/**
+ * @file   PlayerScript.cs
+ *
+ * @brief  プレイヤーに関するヘッダファイル
+ *
+ * @author 制作者名　FUKAYA
+ *
+ * @date   日付　2026/02/02
+ */
+using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class PlayerScript : MonoBehaviour {
+public class PlayerScript : MonoBehaviour 
+{
+// クラス定数の宣言 -------------------------------------------------
+    //プレイヤーの重さ
+    public const float PLAYER_WIEGHT = 100.0f;
+    //宝石の情報
+    struct Treasure_Info
+    {
+        public string name;
+        public float weight;
+        public int score;
 
+    }
+// データメンバの宣言 -----------------------------------------------
+    //現在の重さ
     float m_mass = 100.0f;
+    //合計スコア
     int m_score = 0;
+    //入手宝石情報配列
+    List<Treasure_Info> m_takeTresures;
+
 
     [SerializeField] float      m_speed = 4.0f;
     [SerializeField] float      m_jumpForce = 7.5f;
@@ -39,6 +66,8 @@ public class PlayerScript : MonoBehaviour {
         m_wallSensorR2 = transform.Find("WallSensor_R2").GetComponent<Sensor_HeroKnight>();
         m_wallSensorL1 = transform.Find("WallSensor_L1").GetComponent<Sensor_HeroKnight>();
         m_wallSensorL2 = transform.Find("WallSensor_L2").GetComponent<Sensor_HeroKnight>();
+        //リスト初期化
+        m_takeTresures = new List<Treasure_Info>();
     }
 
     // Update is called once per frame
@@ -99,18 +128,18 @@ public class PlayerScript : MonoBehaviour {
         m_animator.SetBool("WallSlide", m_isWallSliding);
 
         //Death
-        if (Input.GetKeyDown("e") && !m_rolling)
-        {
-            m_animator.SetBool("noBlood", m_noBlood);
-            m_animator.SetTrigger("Death");
-        }
+        //if (Input.GetKeyDown("e") && !m_rolling)
+        //{
+        //    m_animator.SetBool("noBlood", m_noBlood);
+        //    m_animator.SetTrigger("Death");
+        //}
             
         //Hurt
-        else if (Input.GetKeyDown("q") && !m_rolling)
-            m_animator.SetTrigger("Hurt");
+        //else if (Input.GetKeyDown("q") && !m_rolling)
+        //    m_animator.SetTrigger("Hurt");
 
         //Attack
-        else if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f && !m_rolling)
+        if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f && !m_rolling)
         {
             m_currentAttack++;
 
@@ -174,6 +203,12 @@ public class PlayerScript : MonoBehaviour {
                 if(m_delayToIdle < 0)
                     m_animator.SetInteger("AnimState", 0);
         }
+
+        //宝を捨てる
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            ThrowTreasure();
+        }
     }
 
     // Animation Events
@@ -196,6 +231,34 @@ public class PlayerScript : MonoBehaviour {
         }
     }
 
+    /**
+    * @brief 宝を捨てる
+    *
+    * @param[in] なし
+    *
+    * @return なし
+    */
+    private void ThrowTreasure()
+    {
+        //要素が二つ以上なら
+        if (m_takeTresures.Count > 1)
+        {
+            //スコア昇順ソート
+            m_takeTresures.Sort((a, b) => a.score.CompareTo(b.score));
+        }
+        //要素があるなら
+        if (m_takeTresures.Count > 0)
+        {
+            //末尾を取得
+            Treasure_Info last = m_takeTresures[m_takeTresures.Count - 1];
+            //末尾を消す
+            m_takeTresures.RemoveAt(m_takeTresures.Count - 1);
+            //重量とスコアを引く
+            AddMass(-last.weight);
+            AddScore(-last.score);
+            Debug.Log(last.name);
+        }
+    }
     /**
     * @brief 重量のセット
     *
@@ -254,5 +317,38 @@ public class PlayerScript : MonoBehaviour {
     public int GetScore()
     {
         return m_score;
+    }
+    /**
+    * @brief 宝石を手に入れる
+    *
+    * @param[in] treasure  宝石
+    *
+    * @return なし
+    */
+    public void TakeTreasure(GameObject treasureObject)
+    {
+        if (treasureObject == null)
+        {
+            return;
+        }
+        //宝スクリプト取得
+        Treasure treasure = treasureObject.GetComponent<Treasure>();
+        if (treasure == null)
+        {
+            return;
+        }
+        //情報を記録
+        Treasure_Info info;
+        info.name = treasureObject.name;
+        info.weight = treasure.GetWeight();
+        info.score = treasure.GetScore();
+        m_takeTresures.Add(info);
+        Debug.Log(m_takeTresures[m_takeTresures.Count - 1].name);
+        Debug.Log(m_takeTresures[m_takeTresures.Count - 1].weight);
+        Debug.Log(m_takeTresures[m_takeTresures.Count - 1].score);
+        //重量加算
+        AddMass(info.weight);
+        //スコア加算
+        AddScore(info.score);
     }
 }
