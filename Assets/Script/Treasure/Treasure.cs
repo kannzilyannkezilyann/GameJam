@@ -29,6 +29,8 @@ public class Treasure : MonoBehaviour
     [SerializeField] private float m_destroyEffectScale = 5.0f;
     //スコア表示テキスト
     [SerializeField] GameObject m_scoreText;
+    //プレイヤー判定オフ
+    private bool m_playerCollisionOff = false;
 // メンバ関数の定義 -------------------------------------------------
     /**
      * @brief 初期化処理
@@ -39,7 +41,8 @@ public class Treasure : MonoBehaviour
      */
     void Start()
     {
-       
+        //重量によってRigidBodyのGravityScaleを変える
+        GetComponent<Rigidbody2D>().gravityScale *= m_weight/50; 
     }
 
     /**
@@ -64,6 +67,11 @@ public class Treasure : MonoBehaviour
      */
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (m_playerCollisionOff)
+        {
+            return;
+        }
+
         //プレイヤーと接触したら
         if (collision.gameObject.CompareTag("Player"))
         {
@@ -94,6 +102,26 @@ public class Treasure : MonoBehaviour
             //消去
             Destroy(gameObject);
         }
+    }
+
+
+    public void DisableColliderTemporarily()
+    {
+        StartCoroutine(DisableCoroutine());
+        StartCoroutine(DisablePlayerCoroutine());
+    }
+
+    private IEnumerator DisablePlayerCoroutine()
+    {
+        m_playerCollisionOff = true;        // コライダーをオフ
+        yield return new WaitForSeconds(0.7f); // 待つ
+        m_playerCollisionOff = false;         // コライダーを再度オン
+    }
+    private IEnumerator DisableCoroutine()
+    {
+        GetComponent<Collider2D>().enabled = false;        // コライダーをオフ
+        yield return new WaitForSeconds(0.1f); // 待つ
+        GetComponent<Collider2D>().enabled = true;         // コライダーを再度オン
     }
 
     /**
