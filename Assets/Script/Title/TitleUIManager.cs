@@ -48,18 +48,12 @@ public class TitleUIManager : MonoBehaviour
         //中央にロゴが到達していなければ更新を行わない
         if (!m_logoScript.GetArrival()) return;
         //透明度変化演出が終了していなければ演出の更新と、それ以降の更新を飛ばす
-        int endNum = 0;
         for (int i = 0; i < m_selectScripts.Length; i++)
         {
             if (!m_selectScripts[i].GetAlphaEnd())
             {
                 m_selectScripts[i].AlphaChange();
             }
-            else
-            {
-                endNum++;
-            }
-            //if(endNum != m_selectScripts.Length) return;
         }
         //左右キーが押されたら、現在選択されている番号を変更する
         if (Input.GetKeyDown(KeyCode.RightArrow))
