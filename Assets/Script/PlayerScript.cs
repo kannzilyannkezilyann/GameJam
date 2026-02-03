@@ -27,7 +27,7 @@ public class PlayerScript : MonoBehaviour
     List<GameObject> m_takeTresures;
     //宝管理クラス
     [SerializeField] TreasureManager m_treasureManager;
-
+    //false：タイトル用　true：ゲーム用
     [SerializeField] bool m_flag;
 
     [SerializeField] float      m_speed = 4.0f;
@@ -265,9 +265,6 @@ public class PlayerScript : MonoBehaviour
             last.GetComponent<Rigidbody2D>().AddForce(new Vector2(m_facingDirection*200.0f, 90.0f));
             //プレイヤー判定オフ
             treasure.DisableColliderTemporarily();
-            
-            //m_treasureManager.SpawnTreasure(last.name, gameObject.transform.position);
-            
         }
     }
     /**

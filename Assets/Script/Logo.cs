@@ -29,8 +29,11 @@ public class Logo : MonoBehaviour
     [SerializeField] Sprite[] m_logoSprites;
     //表示するためのスプライト
     SpriteRenderer m_spriteRenderer;
+    //スプライトの色
     Color m_color;
+    //変化時間
     private float m_duration = 1.5f;
+    //表示するロゴの番号
     private int m_index = 0;
     //フェード状態
     private int m_fade = START_FADE_IN;
@@ -69,7 +72,7 @@ public class Logo : MonoBehaviour
     void Update()
     {
         //スキップ
-        if (Input.GetMouseButtonDown(0)) 
+        if (Input.GetKeyDown(KeyCode.Space)) 
         {
             m_color.a = m_fade;
             m_spriteRenderer.color = m_color;
@@ -115,7 +118,9 @@ public class Logo : MonoBehaviour
     {
         if (!Mathf.Approximately(m_color.a, targetAlpha))
         {
+            //変化率
             float changePerFrame = Time.deltaTime / m_duration;
+            //少しずつ変化させる
             m_color.a = Mathf.MoveTowards(m_color.a, targetAlpha, changePerFrame);
             m_spriteRenderer.color = m_color;
             return false;
@@ -136,13 +141,13 @@ public class Logo : MonoBehaviour
     private void SpriteScaling()
     {
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
-
+        //カメラ取得
         Camera cam = Camera.main;
         float screenHeight = cam.orthographicSize * 2f;
         float screenWidth = screenHeight * cam.aspect;
 
         Vector2 spriteSize = sr.sprite.bounds.size;
-
+        //画面いっぱいのサイズに調整
         transform.localScale = new Vector3(
             screenWidth / spriteSize.x,
             screenHeight / spriteSize.y,

@@ -37,6 +37,7 @@ public class ScorePopUp : MonoBehaviour
      */
     void Awake()
     {
+        //テキスト取得
         m_text = GetComponent<TextMeshPro>();
         m_startColor = m_text.color;
     }
