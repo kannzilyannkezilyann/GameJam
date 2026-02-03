@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /**
  	 * @file   GoalGateContoroller.cs
@@ -15,6 +18,8 @@ using UnityEngine;
 
 public class GoalGateContoroller : MonoBehaviour
 {
+    [SerializeField] private string m_ClearSceneName = "null"; ///< クリアした時に遷移するシーン名
+
     /*
      * 
      * @brief 初期化処理
@@ -53,6 +58,18 @@ public class GoalGateContoroller : MonoBehaviour
      */
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        
+        //判定はプレイヤーと当たった時のみ
+        if(collision.gameObject.CompareTag("Player"))
+        {
+
+            //横からの衝突のみ判定し、ゴールとみなす
+            if(Mathf.Abs(collision.relativeVelocity.x) > Mathf.Abs(collision.relativeVelocity.y))
+            {
+                //ゴールしたらシーン遷移(nullの場合はデバッグ用ログを出すだけ)
+                if (m_ClearSceneName != "null") SceneManager.LoadScene(m_ClearSceneName);
+                else Debug.Log("ゴール！");
+            }
+
+        }
     }
 }
