@@ -29,7 +29,7 @@ public class Treasure : MonoBehaviour
     [SerializeField] private float m_destroyEffectScale = 5.0f;
     //スコア表示テキスト
     [SerializeField] GameObject m_scoreText;
-    // メンバ関数の定義 -------------------------------------------------
+// メンバ関数の定義 -------------------------------------------------
     /**
      * @brief 初期化処理
      *
@@ -78,8 +78,9 @@ public class Treasure : MonoBehaviour
             PlayerScript player = collision.gameObject.GetComponent<PlayerScript>();
             if (player != null) 
             {
-                player.AddMass(m_weight);
-                player.AddScore(m_score);
+                player.TakeTreasure(gameObject);
+                //player.AddMass(m_weight);
+                //player.AddScore(m_score);
 
                 //スコア表示
                 GameObject text = Instantiate(m_scoreText, transform.position, Quaternion.identity);
@@ -93,5 +94,28 @@ public class Treasure : MonoBehaviour
             //消去
             Destroy(gameObject);
         }
+    }
+
+    /**
+     * @brief 重量取得
+     *
+     * @param[in] なし
+     *
+     * @return 重量
+     */
+    public float GetWeight()
+    {
+        return m_weight;
+    }
+    /**
+     * @brief スコア取得
+     *
+     * @param[in] なし
+     *
+     * @return スコア
+     */
+    public int GetScore()
+    {
+        return m_score;
     }
 }

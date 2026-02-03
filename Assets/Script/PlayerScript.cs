@@ -9,17 +9,28 @@
  */
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerScript : MonoBehaviour 
 {
 // クラス定数の宣言 -------------------------------------------------
     //プレイヤーの重さ
     public const float PLAYER_WIEGHT = 100.0f;
+    //宝石の情報
+    struct Treasure_Info
+    {
+        public string name;
+        public float weight;
+        public int score;
+    }
 // データメンバの宣言 -----------------------------------------------
     //現在の重さ
     float m_mass = 100.0f;
     //合計スコア
     int m_score = 0;
+    //入手宝石情報配列
+    List<Treasure_Info> m_takeTresures;
+
 
     [SerializeField] float      m_speed = 4.0f;
     [SerializeField] float      m_jumpForce = 7.5f;
@@ -54,6 +65,8 @@ public class PlayerScript : MonoBehaviour
         m_wallSensorR2 = transform.Find("WallSensor_R2").GetComponent<Sensor_HeroKnight>();
         m_wallSensorL1 = transform.Find("WallSensor_L1").GetComponent<Sensor_HeroKnight>();
         m_wallSensorL2 = transform.Find("WallSensor_L2").GetComponent<Sensor_HeroKnight>();
+        //リスト初期化
+        m_takeTresures = new List<Treasure_Info>();
     }
 
     // Update is called once per frame
@@ -269,5 +282,38 @@ public class PlayerScript : MonoBehaviour
     public int GetScore()
     {
         return m_score;
+    }
+    /**
+    * @brief 宝石を手に入れる
+    *
+    * @param[in] treasure  宝石
+    *
+    * @return なし
+    */
+    public void TakeTreasure(GameObject treasureObject)
+    {
+        if (treasureObject == null)
+        {
+            return;
+        }
+        //宝スクリプト取得
+        Treasure treasure = treasureObject.GetComponent<Treasure>();
+        if (treasure == null)
+        {
+            return;
+        }
+        //情報を記録
+        Treasure_Info info;
+        info.name = treasureObject.name;
+        info.weight = treasure.GetWeight();
+        info.score = treasure.GetScore();
+        m_takeTresures.Add(info);
+        Debug.Log(m_takeTresures[m_takeTresures.Count - 1].name);
+        Debug.Log(m_takeTresures[m_takeTresures.Count - 1].weight);
+        Debug.Log(m_takeTresures[m_takeTresures.Count - 1].score);
+        //重量加算
+        AddMass(info.weight);
+        //スコア加算
+        AddScore(info.score);
     }
 }
