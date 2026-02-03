@@ -1,10 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class TitlePlayerScript : MonoBehaviour {
 
+    //プレイヤーの重さ
+    public const float PLAYER_WIEGHT = 100.0f;
+    //宝石の情報
+    struct Treasure_Info
+    {
+        public string name;
+        public float weight;
+        public int score;
+
+    }
+    //現在の重さ
     float m_mass = 100.0f;
+    //合計スコア
     int m_score = 0;
+    //入手宝石情報配列
+    List<Treasure_Info> m_takeTresures;
 
     [SerializeField] float      m_speed = 4.0f;
     [SerializeField] float      m_jumpForce = 7.5f;
@@ -126,9 +141,16 @@ public class TitlePlayerScript : MonoBehaviour {
                 m_animator.SetInteger("AnimState", 0);
         }
 
+        //画面端に行ったら戻る
         if(m_body2d.position.x >= 12.0f)
         {
             m_body2d.position = new Vector2(-12.0f, m_body2d.position.y);
+        }
+
+        //宝を捨てる
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            ThrowTreasure();
         }
     }
 
@@ -152,6 +174,34 @@ public class TitlePlayerScript : MonoBehaviour {
         }
     }
 
+    /**
+    * @brief 宝を捨てる
+    *
+    * @param[in] なし
+    *
+    * @return なし
+    */
+    private void ThrowTreasure()
+    {
+        //要素が二つ以上なら
+        if (m_takeTresures.Count > 1)
+        {
+            //スコア昇順ソート
+            m_takeTresures.Sort((a, b) => a.score.CompareTo(b.score));
+        }
+        //要素があるなら
+        if (m_takeTresures.Count > 0)
+        {
+            //末尾を取得
+            Treasure_Info last = m_takeTresures[m_takeTresures.Count - 1];
+            //末尾を消す
+            m_takeTresures.RemoveAt(m_takeTresures.Count - 1);
+            //重量とスコアを引く
+            AddMass(-last.weight);
+            AddScore(-last.score);
+            Debug.Log(last.name);
+        }
+    }
     /**
     * @brief 重量のセット
     *

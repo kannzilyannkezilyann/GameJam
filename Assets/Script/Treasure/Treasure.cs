@@ -79,8 +79,8 @@ public class Treasure : MonoBehaviour
             if (player != null) 
             {
                 player.TakeTreasure(gameObject);
-                //player.AddMass(m_weight);
-                //player.AddScore(m_score);
+                player.AddMass(m_weight);
+                player.AddScore(m_score);
 
                 //スコア表示
                 GameObject text = Instantiate(m_scoreText, transform.position, Quaternion.identity);
