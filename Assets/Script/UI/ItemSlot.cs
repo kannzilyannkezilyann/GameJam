@@ -24,7 +24,7 @@ public class ItemSlot : MonoBehaviour
     [SerializeField] Image m_itemImage;
     // ƒƒ“ƒoŠÖ”‚Ì’è‹` -------------------------------------------------
     /**
-     * @brief ‰Šú‰»ˆ—
+     * @brief ¶¬ˆ—
      *
      * @param[in] ‚È‚µ
      *

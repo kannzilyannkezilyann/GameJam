@@ -31,9 +31,9 @@ public class Treasure : MonoBehaviour
     [SerializeField] GameObject m_scoreText;
     //プレイヤー判定オフ
     private bool m_playerCollisionOff = false;
-// メンバ関数の定義 -------------------------------------------------
+    // メンバ関数の定義 -------------------------------------------------
     /**
-     * @brief 初期化処理
+     * @brief 生成時処理
      *
      * @param[in] なし
      *

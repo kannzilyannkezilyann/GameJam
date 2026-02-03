@@ -22,9 +22,9 @@ public class ScoreText : MonoBehaviour
     [SerializeField] PlayerScript m_player;
     //テキスト
     private TextMeshProUGUI m_text;
-// メンバ関数の定義 -------------------------------------------------
+    // メンバ関数の定義 -------------------------------------------------
     /**
-     * @brief 初期化処理
+     * @brief 生成時処理
      *
      * @param[in] なし
      *
