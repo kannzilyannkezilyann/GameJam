@@ -29,15 +29,18 @@ public class Logo : MonoBehaviour
     [SerializeField] Sprite[] m_logoSprites;
     //表示するためのスプライト
     SpriteRenderer m_spriteRenderer;
+    //スプライトの色
     Color m_color;
+    //変化時間
     private float m_duration = 1.5f;
+    //表示するロゴの番号
     private int m_index = 0;
     //フェード状態
     private int m_fade = START_FADE_IN;
 
-// メンバ関数の定義 -------------------------------------------------
+    // メンバ関数の定義 -------------------------------------------------
     /**
-     * @brief 初期化処理
+     * @brief 生成時処理
      *
      * @param[in] なし
      *
@@ -55,6 +58,8 @@ public class Logo : MonoBehaviour
         m_color = m_spriteRenderer.color;
         //透明にする
         m_color.a = 0;
+
+        SpriteScaling();
     }
 
     /**
@@ -67,7 +72,7 @@ public class Logo : MonoBehaviour
     void Update()
     {
         //スキップ
-        if (Input.GetMouseButtonDown(0)) 
+        if (Input.GetKeyDown(KeyCode.Space)) 
         {
             m_color.a = m_fade;
             m_spriteRenderer.color = m_color;
@@ -85,8 +90,11 @@ public class Logo : MonoBehaviour
                 //次のロゴを表示
                 if (m_index < m_logoSprites.Length)
                 {
+
+
                     m_spriteRenderer.sprite = m_logoSprites[m_index];
                     m_fade = START_FADE_IN;
+                    SpriteScaling();
                 }
                 else
                 {
@@ -110,7 +118,9 @@ public class Logo : MonoBehaviour
     {
         if (!Mathf.Approximately(m_color.a, targetAlpha))
         {
+            //変化率
             float changePerFrame = Time.deltaTime / m_duration;
+            //少しずつ変化させる
             m_color.a = Mathf.MoveTowards(m_color.a, targetAlpha, changePerFrame);
             m_spriteRenderer.color = m_color;
             return false;
@@ -121,5 +131,28 @@ public class Logo : MonoBehaviour
         }
 
     }
+    /**
+     * @brief スプライトのサイズ調整
+     *
+     * @param[in] なし
+     *
+     * @return なし
+     */
+    private void SpriteScaling()
+    {
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        //カメラ取得
+        Camera cam = Camera.main;
+        float screenHeight = cam.orthographicSize * 2f;
+        float screenWidth = screenHeight * cam.aspect;
 
+        Vector2 spriteSize = sr.sprite.bounds.size;
+        //画面いっぱいのサイズに調整
+        transform.localScale = new Vector3(
+            screenWidth / spriteSize.x,
+            screenHeight / spriteSize.y,
+            1f
+        );
+
+    }
 }

@@ -29,9 +29,11 @@ public class Treasure : MonoBehaviour
     [SerializeField] private float m_destroyEffectScale = 5.0f;
     //スコア表示テキスト
     [SerializeField] GameObject m_scoreText;
+    //プレイヤー判定オフ
+    private bool m_playerCollisionOff = false;
     // メンバ関数の定義 -------------------------------------------------
     /**
-     * @brief 初期化処理
+     * @brief 生成時処理
      *
      * @param[in] なし
      *
@@ -39,7 +41,8 @@ public class Treasure : MonoBehaviour
      */
     void Start()
     {
-       
+        //重量によってRigidBodyのGravityScaleを変える
+        GetComponent<Rigidbody2D>().gravityScale *= m_weight/50; 
     }
 
     /**
@@ -51,7 +54,6 @@ public class Treasure : MonoBehaviour
      */
     void Update()
     {
-        
     }
 
 
@@ -64,6 +66,12 @@ public class Treasure : MonoBehaviour
      */
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        //プレイヤーの衝突応答処理がオフなら
+        if (m_playerCollisionOff)
+        {
+            return;
+        }
+
         //プレイヤーと接触したら
         if (collision.gameObject.CompareTag("Player"))
         {
@@ -78,13 +86,12 @@ public class Treasure : MonoBehaviour
             PlayerScript player = collision.gameObject.GetComponent<PlayerScript>();
             if (player != null) 
             {
-                player.AddMass(m_weight);
-                player.AddScore(m_score);
+                //プレイヤーに情報を渡す
+                player.TakeTreasure(gameObject);
 
                 //スコア表示
                 GameObject text = Instantiate(m_scoreText, transform.position, Quaternion.identity);
-                ScorePopUp scorePopUp = text.GetComponent<ScorePopUp>();
-                if(scorePopUp != null)
+                if(text.TryGetComponent<ScorePopUp>(out var scorePopUp))
                 {
                     scorePopUp.SetUp(m_score);
                 }
@@ -93,5 +100,70 @@ public class Treasure : MonoBehaviour
             //消去
             Destroy(gameObject);
         }
+    }
+
+
+    /**
+     * @brief プレイヤーの判定を一定時間オフにする
+     *
+     * @param[in] なし
+     *
+     * @return なし
+     */
+    public void DisableColliderTemporarily()
+    {
+        StartCoroutine(DisableCoroutine());
+        StartCoroutine(DisablePlayerCoroutine());
+    }
+
+    /**
+     * @brief プレイヤーの衝突応答をオフに
+     *
+     * @param[in] なし
+     *
+     * @return なし
+     */
+    private IEnumerator DisablePlayerCoroutine()
+    {
+        m_playerCollisionOff = true;        // 衝突応答をオフ
+        yield return new WaitForSeconds(0.7f); // 待つ
+        m_playerCollisionOff = false;         // 衝突応答を再度オン
+    }
+
+    /**
+     * @brief コライダーをオフに
+     *
+     * @param[in] なし
+     *
+     * @return なし
+     */
+    private IEnumerator DisableCoroutine()
+    {
+        GetComponent<Collider2D>().enabled = false;        // コライダーをオフ
+        yield return new WaitForSeconds(0.1f); // 待つ
+        GetComponent<Collider2D>().enabled = true;         // コライダーを再度オン
+    }
+
+    /**
+     * @brief 重量取得
+     *
+     * @param[in] なし
+     *
+     * @return 重量
+     */
+    public float GetWeight()
+    {
+        return m_weight;
+    }
+    /**
+     * @brief スコア取得
+     *
+     * @param[in] なし
+     *
+     * @return スコア
+     */
+    public int GetScore()
+    {
+        return m_score;
     }
 }

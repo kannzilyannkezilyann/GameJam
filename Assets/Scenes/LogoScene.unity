@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 1125686310}
   - component: {fileID: 1125686309}
   - component: {fileID: 1125686308}
+  - component: {fileID: 1125686311}
   m_Layer: 0
   m_Name: LogoSprite
   m_TagString: Untagged
@@ -150,8 +151,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5e677248655a12449b715416e7777f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scene: {fileID: 0}
-  logoSprites:
+  m_scene: {fileID: 102900000, guid: f0fa3cb7293f25645b8f83b539f08ae4, type: 3}
+  m_logoSprites:
   - {fileID: 4798243980687864409, guid: 36de8da7589f6da49ad50d9c3440fb25, type: 3}
   - {fileID: -8006477838760958662, guid: 793f11880f67b144ba99a91ec352d78a, type: 3}
 --- !u!212 &1125686309
@@ -221,6 +222,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1125686311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1125686307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12f35c548e171794cb129dd3677fe5c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1154836498
 GameObject:
   m_ObjectHideFlags: 0
