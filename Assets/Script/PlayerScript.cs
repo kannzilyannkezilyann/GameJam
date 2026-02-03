@@ -22,6 +22,7 @@ public class PlayerScript : MonoBehaviour
         public string name;
         public float weight;
         public int score;
+
     }
 // データメンバの宣言 -----------------------------------------------
     //現在の重さ
@@ -127,18 +128,18 @@ public class PlayerScript : MonoBehaviour
         m_animator.SetBool("WallSlide", m_isWallSliding);
 
         //Death
-        if (Input.GetKeyDown("e") && !m_rolling)
-        {
-            m_animator.SetBool("noBlood", m_noBlood);
-            m_animator.SetTrigger("Death");
-        }
+        //if (Input.GetKeyDown("e") && !m_rolling)
+        //{
+        //    m_animator.SetBool("noBlood", m_noBlood);
+        //    m_animator.SetTrigger("Death");
+        //}
             
         //Hurt
-        else if (Input.GetKeyDown("q") && !m_rolling)
-            m_animator.SetTrigger("Hurt");
+        //else if (Input.GetKeyDown("q") && !m_rolling)
+        //    m_animator.SetTrigger("Hurt");
 
         //Attack
-        else if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f && !m_rolling)
+        if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f && !m_rolling)
         {
             m_currentAttack++;
 
@@ -202,6 +203,12 @@ public class PlayerScript : MonoBehaviour
                 if(m_delayToIdle < 0)
                     m_animator.SetInteger("AnimState", 0);
         }
+
+        //宝を捨てる
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            ThrowTreasure();
+        }
     }
 
     // Animation Events
@@ -224,6 +231,34 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    /**
+    * @brief 宝を捨てる
+    *
+    * @param[in] なし
+    *
+    * @return なし
+    */
+    private void ThrowTreasure()
+    {
+        //要素が二つ以上なら
+        if (m_takeTresures.Count > 1)
+        {
+            //スコア昇順ソート
+            m_takeTresures.Sort((a, b) => a.score.CompareTo(b.score));
+        }
+        //要素があるなら
+        if (m_takeTresures.Count > 0)
+        {
+            //末尾を取得
+            Treasure_Info last = m_takeTresures[m_takeTresures.Count - 1];
+            //末尾を消す
+            m_takeTresures.RemoveAt(m_takeTresures.Count - 1);
+            //重量とスコアを引く
+            AddMass(-last.weight);
+            AddScore(-last.score);
+            Debug.Log(last.name);
+        }
+    }
     /**
     * @brief 重量のセット
     *
