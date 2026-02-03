@@ -7,9 +7,9 @@ using UnityEngine;
 *
 * @brief  ゲームプレイ中のカメラに関するソースファイル
 *
-* @author 制作者名　福地貴翔
+* @author 制作者名　深谷翔太
 *
-* @date   最終更新日　2025/12/16
+* @date   最終更新日　2026/2/2
 */
 public class GamePlayCameraScript : MonoBehaviour
 {
@@ -18,6 +18,7 @@ public class GamePlayCameraScript : MonoBehaviour
     [SerializeField] private float m_centerRange = 0.05f;
     [SerializeField] private float m_startPosX = 0.0f;
     [SerializeField] private float m_endPosX = 3.0f;
+    [SerializeField] int ppu = 32;
     bool m_inCenterX = false;
 
     /**
@@ -90,5 +91,10 @@ public class GamePlayCameraScript : MonoBehaviour
 
             transform.position = targetPos;
         }
+
+        Vector3 pos = transform.position;
+        pos.x = Mathf.Round(pos.x * ppu) / ppu;
+        pos.y = Mathf.Round(pos.y * ppu) / ppu;
+        transform.position = pos;
     }
 }
