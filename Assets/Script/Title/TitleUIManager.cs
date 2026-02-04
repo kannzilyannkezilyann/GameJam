@@ -32,12 +32,7 @@ public class TitleUIManager : MonoBehaviour
     */
     void Start()
     {
-        if (m_logoScript == null)
-        {
-            Debug.LogError("m_titleLogoScript がアタッチされていません！");
-            enabled = false; // Update を止める
-            return;
-        }
+
     }
 
     /**
@@ -49,11 +44,6 @@ public class TitleUIManager : MonoBehaviour
     */
     void Update()
     {
-        if (m_logoScript == null) return;
-        for (int i = 0; i < m_selectScripts.Length; i++)
-        {
-            if (m_selectScripts[i] == null) return;
-        }
         //中央にロゴが到達していなければ更新を行わない
         if (!m_logoScript.GetArrival()) return;
         //透明度変化演出が終了していなければ演出の更新と、それ以降の更新を飛ばす

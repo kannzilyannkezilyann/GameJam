@@ -19,9 +19,19 @@ public class ItemSlot : MonoBehaviour
 {
 // データメンバの宣言 -----------------------------------------------
     //プレイヤー
-    [SerializeField] PlayerScript player;
-    //アイテム画像
-    [SerializeField] Image m_itemImage;
+    [SerializeField] PlayerScript m_player;
+
+    //アイテムのイメージ群
+    [System.Serializable]
+    public class ItemUI
+    {
+        public ItemKinds kind;
+        public GameObject imageObj;
+    }
+
+    //イメージ群のリスト
+    [SerializeField] private ItemUI[] itemUIs;
+
     // メンバ関数の定義 -------------------------------------------------
     /**
      * @brief 生成時処理
@@ -32,7 +42,6 @@ public class ItemSlot : MonoBehaviour
      */
     void Start()
     {
-        m_itemImage.enabled = false;
     }
 
 
@@ -45,6 +54,26 @@ public class ItemSlot : MonoBehaviour
      */
     void Update()
     {
-        //プレイヤーがアイテムを所持していたらアイテムの画像を表示
+        //プレイヤーがnullなら飛ばす
+        if(m_player == null) return;
+
+        //現在所持しているアイテムに応じて画像を表示させる
+        ItemKinds nowItem = m_player.GetItem();
+
+        // 全部非表示
+        foreach (var ui in itemUIs)
+        {
+            ui.imageObj.SetActive(false);
+        }
+
+        // 所持アイテムだけ表示
+        foreach (var ui in itemUIs)
+        {
+            if (ui.kind == nowItem)
+            {
+                ui.imageObj.SetActive(true);
+                break;
+            }
+        }
     }
 }
