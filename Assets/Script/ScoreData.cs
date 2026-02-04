@@ -17,9 +17,8 @@ using UnityEngine;
 
 public class ScoreData : MonoBehaviour
 {
-    // データメンバの宣言 -----------------------------------------------
-    //ハイスコア
-    private float m_highScore;
+// データメンバの宣言 -----------------------------------------------
+    
 // メンバ関数の定義 -------------------------------------------------
     /**
      * @brief 生成時処理
@@ -47,4 +46,38 @@ public class ScoreData : MonoBehaviour
     }
 
 
+    /**
+     * @brief ハイスコア取得
+     *
+     * @param[in] stage  保存するステージ
+     *
+     * @return なし
+     */
+    public int GetHighScore(string stage)
+    {
+        return PlayerPrefs.GetInt(stage, 0);
+    }
+
+    /**
+     * @brief ハイスコア設定
+     *
+     * @param[in] stage  保存するステージ
+     * @param[in] score  スコア
+     *
+     * @return true   ハイスコア更新した
+     * @return false  ハイスコア更新しなかった
+     */
+    public bool SetHighScore(string stage, int score)
+    {
+        //現在のハイスコア取得
+        int currentHighScore = GetHighScore(stage);
+        //ハイスコアか比較
+        if (currentHighScore > score) 
+        {
+            return false;
+        }
+        //スコアを保存
+        PlayerPrefs.SetInt(stage, score);
+        return true;
+    }
 }
