@@ -22,6 +22,9 @@ public class TitleUIMoveScript : MonoBehaviour
     Color m_color;
     //透明度調整演出が終了したかどうか
     bool m_endAlpha = false;
+    //タイマー(演出に使用)
+    float m_timer;
+
     /**
     * @brief 初期化処理
     *
@@ -31,6 +34,7 @@ public class TitleUIMoveScript : MonoBehaviour
     */
     void Start()
     {
+        m_timer = 0.0f;
         m_initialScale = transform.localScale;
         m_color = gameObject.GetComponent<Image>().color;
         m_color.a = 0.0f;
@@ -51,7 +55,8 @@ public class TitleUIMoveScript : MonoBehaviour
     */
     public void ChoiceMove()
     {
-        float sin = Mathf.Sin(Time.time) * Mathf.Sin(Time.time);
+        m_timer += Time.deltaTime;
+        float sin = (Mathf.Sin(m_timer) + 1.0f) / 2.0f; //0~1の範囲
         float scaleIndex = m_initialScale.x + m_range * sin;
         this.transform.localScale = new Vector2(scaleIndex, scaleIndex);
     }
@@ -73,20 +78,31 @@ public class TitleUIMoveScript : MonoBehaviour
     *
     * @param[in] なし
     *
-    * @return 演出の終了
+    * @return 
     */
     public void AlphaChange()
     {
-        if (m_color == null) return;
-        float sin = (Mathf.Sin(Time.time) + 1.0f) / 2.0f;
+        m_timer += Time.deltaTime;
+        float sin = (Mathf.Sin(m_timer) + 1.0f) / 2.0f; //0~1の範囲
         if(sin >= 0.99f)
         {
             sin = 1.0f;
             m_endAlpha = true;
         }
-        Debug.Log(sin);
         m_color.a = sin;
         gameObject.GetComponent<Image>().color = m_color;
+    }
+
+    /**
+    * @brief タイマーのリセット処理
+    *
+    * @param[in] なし
+    *
+    * @return 
+    */
+    public void ResetTimer()
+    {
+        m_timer = 0.0f;
     }
 
     /**

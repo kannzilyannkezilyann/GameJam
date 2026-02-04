@@ -38,7 +38,6 @@ public class CountUpText : MonoBehaviour
      *
      * @return ‚È‚µ
      */
-
     public void Initialize(int start,int target,int step)
     {
         m_currentNumber = start;

@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5e677248655a12449b715416e7777f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_scene: {fileID: 102900000, guid: f0fa3cb7293f25645b8f83b539f08ae4, type: 3}
+  m_scene: TitleScene
   m_logoSprites:
   - {fileID: 4798243980687864409, guid: 36de8da7589f6da49ad50d9c3440fb25, type: 3}
   - {fileID: -8006477838760958662, guid: 793f11880f67b144ba99a91ec352d78a, type: 3}
