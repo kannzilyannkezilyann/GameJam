@@ -653,6 +653,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 277db30f27df7471d9c1edddd00dced6, type: 3}
+--- !u!1 &1122006310 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6323719953710832613, guid: 1aa09a56e7db6a247871fa73d74b966b, type: 3}
+  m_PrefabInstance: {fileID: 1987435689}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1264259683
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1055,6 +1060,25 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8413529789942519730, guid: 1aa09a56e7db6a247871fa73d74b966b, type: 3}
   m_PrefabInstance: {fileID: 1987435689}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1526365390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1122006310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd09a23a53fe6eb45bd8790755bffc32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_treasureManager: {fileID: 0}
+  m_flag: 0
+  m_speed: 4
+  m_jumpForce: 7.5
+  m_rollForce: 6
+  m_noBlood: 1
+  m_slideDust: {fileID: 0}
 --- !u!4 &1563304183 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4866197767079944, guid: 277db30f27df7471d9c1edddd00dced6, type: 3}
@@ -18131,7 +18155,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6323719953710832613, guid: 1aa09a56e7db6a247871fa73d74b966b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1526365390}
   m_SourcePrefab: {fileID: 100100000, guid: 1aa09a56e7db6a247871fa73d74b966b, type: 3}
 --- !u!1 &2034261102
 GameObject:

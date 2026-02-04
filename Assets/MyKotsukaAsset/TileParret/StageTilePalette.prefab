@@ -907,7 +907,7 @@ GameObject:
   - component: {fileID: 7616135761385059167}
   - component: {fileID: 5936878793008976915}
   m_Layer: 0
-  m_Name: GameObjectPalette
+  m_Name: StageTilePalette
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
