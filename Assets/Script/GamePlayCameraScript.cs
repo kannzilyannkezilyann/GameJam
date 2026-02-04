@@ -7,7 +7,7 @@ using UnityEngine;
 *
 * @brief  ゲームプレイ中のカメラに関するソースファイル
 *
-* @author 制作者名　福地貴翔
+* @author 制作者名　福地貴翔,小塚太陽
 *
 * @date   最終更新日　2025/12/16
 */
@@ -26,8 +26,6 @@ public class GamePlayCameraScript : MonoBehaviour
 
     private float m_firstPosY; ///< 最初のYの位置
 
-    bool m_inCenterX = false; ///< カメラの中央(X)にプレイヤーが侵入したかどうか（これがtrueならX追跡開始）
-  
     /**
     * @brief 初期化処理
     *
@@ -72,54 +70,10 @@ public class GamePlayCameraScript : MonoBehaviour
 
 
         //カメラのX座標が外に出ないようにする
-        if (this.transform.position.x > m_endPosX)
-        {
-            //Vector3 targetPos = new Vector3(
-            //    m_endPosX,
-            //    transform.position.y,
-            //    transform.position.z
-            //);
-
-            targetPos.x = m_endPosX;
-
-           // transform.position = targetPos;
-            m_inCenterX = false;
-        }
-        if(this.transform.position.x < m_startPosX)
-        {
-            //Vector3 targetPos = new Vector3(
-            //    m_startPosX,
-            //    transform.position.y,
-            //    transform.position.z
-            //);
-
-            targetPos.x = m_startPosX;
-
-           // transform.position = targetPos;
-            m_inCenterX = false;
-        }
-
-        //X座標の調整（プレイヤーが中央に来たら追跡開始）
-        if (!m_inCenterX)
-        {
-            
-            m_inCenterX = m_player.position.x >= this.transform.position.x - m_centerRange &&
-                          m_player.position.x <= this.transform.position.x + m_centerRange;
-        }
-        else
-        {
-            targetPos.x = m_player.position.x;
-        }
+        targetPos.x = Mathf.Clamp(m_player.position.x, m_startPosX, m_endPosX);
 
 
-        
-
-       // if (!m_inCenterY)
-       // {
-       //     m_inCenterY = m_player.position.y >= this.transform.position.y - m_centerRange &&
-       //                   m_player.position.y <= this.transform.position.y + m_centerRange;
-       // }
-
+        //カメラの座標
         if(Mathf.Abs(m_player.position.y - m_firstPosY) >= m_cameraMoveYBorder)
         {
             //targetPos.y = m_player.position.y;

@@ -1,114 +1,134 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using static UnityEditor.PlayerSettings;
 
 /*
  *
- * @brief ステージを徐々に崩していくクラス
+ * @brief ステージを徐々に崩していくクラス（複数のTilemapを一つに見立てて左から順に破壊）
  * 
- * @autor 制作者　小塚太陽
+ * @autor 制作者　小塚太陽（改良: GitHub Copilot 風）
  * 
- * @detail ステージがどんどん崩れていく部分のクラスです。
- * 
+ * @detail 複数のTilemapがサイズや左端位置がバラバラでも、
+ *         全体を「ひとつの横方向の連続したグリッド」と見なして
+ *         左端（最小X）から右方向に列単位で破壊していきます。
  * 
  */
 
-
-
-
-
 public class StageDestroyer : MonoBehaviour
 {
-
-    [SerializeField] private Tilemap m_tileMap; ///< 崩すタイルマップ
-
-    [SerializeField] float m_timer = 0; ///< タイマー
-
+    [SerializeField] private Tilemap[] m_tileMaps; ///< 崩すタイルマップたち
+    [SerializeField] float m_timer = 0f; ///< タイマー
     [SerializeField] int m_destroyInterval = 5; ///< ブロックを破壊する間隔（秒単位）
-
     [SerializeField] int m_destroyCount = 1; ///< ステージを一気に破壊する列数
 
-    int m_currentDestroyRaw; ///<　今壊しているRaw;
+    [SerializeField] GameObject m_fallTileBlock; ///< 呼び出す落下オブジェクト
 
-    int m_tileMapWidth; ///< タイルマップの横幅
+    int m_currentDestroyColumn = 0; ///< 既に破壊した列数（左からのオフセット）
+    int m_globalMinX = int.MaxValue; ///< 崩すタイルマップの中で最小のX
+    int m_globalMaxX = int.MinValue; ///< 崩すタイルマップの中で最大のX
 
-    int m_tileMapHeight; ///< タイルマップの縦幅
+    bool m_isSaccese = false; ///< 成功したかどうか
 
-
-    /*
-     *
-     * @brief 初期化処理
-     * 
-     * @param[in] なし
-     *
-     * @return なし
-     * 
-     */
     void Start()
     {
-        //タイマーリセット
-        m_timer = 0;
+        // 初期化
+        m_timer = 0f;
+        m_currentDestroyColumn = 0;
 
-        //タイルの幅から
-        m_tileMapWidth = m_tileMap.GetComponent<Tilemap>().cellBounds.x;
-        m_tileMapHeight = m_tileMap.GetComponent<Tilemap>().cellBounds.y;
-    }
-
-  
-    /*
-     * 
-     * @brief 更新処理
-     * 
-     * @param[in] なし
-     * 
-     * @return なし
-     * 
-     */
-    void Update()
-    {
-        //時間加算
-        m_timer += Time.deltaTime;
-
-        
-        //間隔が来たら破壊させる
-        if(m_timer > m_destroyInterval)
+        //エラー回避処理(そもそもタイルマップが入ってない時など)
+        if (m_tileMaps == null || m_tileMaps.Length == 0)
         {
-            //設定した破壊数分破壊する
-            for (int i = 0; i < m_destroyCount; i++)
-            {
-                DestroyStage(i + m_currentDestroyRaw);
-            }
-
-            //破壊した行を加算（次に破壊する場所の指標にする）
-            m_currentDestroyRaw += m_destroyCount;
-
-            //タイマーリセット
-            m_timer = 0;
+            Debug.LogWarning("StageDestroyer: Tilemaps not assigned.");
+            return;
         }
 
+        foreach (var tileMap in m_tileMaps)
+        {
+            if (tileMap == null) continue;
+
+            var bounds = tileMap.cellBounds;
+            if (bounds.xMin < m_globalMinX) m_globalMinX = bounds.xMin;
+            if (bounds.xMax > m_globalMaxX) m_globalMaxX = bounds.xMax;
+        }
+
+        //ここまで来たらエラーなしということで成功変数をtrueに
+        m_isSaccese = true;
+    }
+
+    void Update()
+    {
+        //初期化成功してなければ終了する
+        if(!m_isSaccese) return;
+
+        //タイマー加算
+        m_timer += Time.deltaTime;
+
+        //タイマーが破壊間隔を超えたら破壊処理に
+        if (m_timer > m_destroyInterval)
+        {
+            //破壊カウントの回数分破壊する
+            for (int i = 0; i < m_destroyCount; i++)
+            {
+                int globalX = m_globalMinX + m_currentDestroyColumn;
+
+
+                DestroyStage(globalX);
+                m_currentDestroyColumn++;
+            }
+
+            m_timer = 0f;
+        }
     }
 
     /*
-     * 
-     * @brief ステージの破壊処理
-     * 
-     * @param[in] x 破壊する行（X）
-     * 
-     * @return なし
-     * 
+     * @brief 指定されたX列を破壊する処理
+     * @param[in] globalX グローバル座標系のX（ワールドではなくTilemapのセル座標）
      */
-    void DestroyStage(int x)
+    void DestroyStage(int globalX)
     {
-        for(int y = 0;y < m_tileMapHeight;y++)
-        {
-            //x,yから位置を作る
-            Vector3Int pos = new(x, y,0);
 
-            //その位置のタイルをnullに置き換える
-            m_tileMap.SetTile(pos,null);
+        foreach (var tileMap in m_tileMaps)
+        {
+            // 範囲内にいなければスキップして次へ
+            if (globalX < tileMap.cellBounds.xMin) continue;
+
+            // そのX列の上から下まで全て破壊する
+            for (int y = tileMap.cellBounds.yMin; y < tileMap.cellBounds.yMax; y++)
+            {
+                //X,Yを位置に変換
+                Vector3Int pos = new Vector3Int(globalX, y, 0);
+
+
+                // タイルが存在する場合のみ破壊
+                if (tileMap.HasTile(pos))
+                {
+                    //破壊されたタイルを落下するオブジェクトとして呼び出す
+                    if(m_fallTileBlock != null)
+                    {
+                        //事前に取得しておいた落下ブロックのプレハブから落下ブロックのインスタンスを新たに作成
+                        GameObject fallBlock = Instantiate(m_fallTileBlock,pos,Quaternion.identity);
+
+                        //コンポーネント取得
+                        var render    = fallBlock.GetComponent<SpriteRenderer>();
+                        var rigidBody = fallBlock.GetComponent<Rigidbody2D>();
+
+                        //スプライトを破壊するタイルのものに変更
+                        render.sprite = tileMap.GetSprite(pos);
+                        render.color = tileMap.color * tileMap.GetColor(pos);
+
+                        //スプライトの落下速度などの物理設定
+                        rigidBody.velocity = new Vector3(Random.Range(-0.1f, 0.1f),
+                                                         Random.Range(-1.0f, 1.0f),
+                                                         0);
+
+                        rigidBody.angularVelocity = Random.Range(5.0f, -5.0f);
+                    }
+
+                    //元あったタイルはnullにする
+                    tileMap.SetTile(pos, null);
+                }
+            }
         }
     }
 }

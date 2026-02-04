@@ -10,6 +10,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class PlayerScript : MonoBehaviour 
@@ -29,14 +30,17 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] TreasureManager m_treasureManager;
     //false：タイトル用　true：ゲーム用
     [SerializeField] bool m_flag;
+    ///死亡した時に遷移するシーン
+    [SerializeField] private string m_deadScene; 
 
-    [SerializeField] float      m_speed = 4.0f;
-    [SerializeField] float      m_jumpForce = 7.5f;
-    [SerializeField] float      m_rollForce = 6.0f;
+    [SerializeField] float      m_speed = 4.0f;      ///< 移動速度
+    [SerializeField] float      m_jumpForce = 7.5f;  ///< ジャンプ力
+    [SerializeField] float      m_rollForce = 6.0f;  ///< 回転力
     [SerializeField] bool       m_noBlood = false;
     [SerializeField] GameObject m_slideDust;
+    [SerializeField] float m_deadY;                  ///< プレイヤーが死亡するY座標
 
-    private Animator            m_animator;
+    private Animator            m_animator; ///< アニメーター
     private Rigidbody2D         m_body2d;
     private Sensor_HeroKnight   m_groundSensor;
     private Sensor_HeroKnight   m_wallSensorR1;
@@ -115,7 +119,7 @@ public class PlayerScript : MonoBehaviour
         }
 
         float speedIndex = 1 / (m_mass / 100.0f);
-        // Move
+        // 移動
         if (!m_rolling )
             m_body2d.velocity = new Vector2(inputX * m_speed * speedIndex, m_body2d.velocity.y);
 
@@ -124,8 +128,8 @@ public class PlayerScript : MonoBehaviour
 
         // -- Handle Animations --
         //Wall Slide
-        m_isWallSliding = (m_wallSensorR1.State() && m_wallSensorR2.State()) || (m_wallSensorL1.State() && m_wallSensorL2.State());
-        m_animator.SetBool("WallSlide", m_isWallSliding);
+        //m_isWallSliding = (m_wallSensorR1.State() && m_wallSensorR2.State()) || (m_wallSensorL1.State() && m_wallSensorL2.State());
+        //m_animator.SetBool("WallSlide", m_isWallSliding);
 
         //Death
         //if (Input.GetKeyDown("e") && !m_rolling)
@@ -168,17 +172,17 @@ public class PlayerScript : MonoBehaviour
         //else if (Input.GetMouseButtonUp(1) && m_flag)
         //    m_animator.SetBool("IdleBlock", false);
 
-        // Roll
-        if (Input.GetKeyDown("left shift") && !m_rolling && !m_isWallSliding && m_flag)
-        {
-            m_rolling = true;
-            m_animator.SetTrigger("Roll");
-            m_body2d.velocity = new Vector2(m_facingDirection * m_rollForce, m_body2d.velocity.y);
-        }
+        // ローリング
+        //if (Input.GetKeyDown("left shift") && !m_rolling && !m_isWallSliding && m_flag)
+        //{
+        //    m_rolling = true;
+        //    m_animator.SetTrigger("Roll");
+        //    m_body2d.velocity = new Vector2(m_facingDirection * m_rollForce, m_body2d.velocity.y);
+        //}
             
 
-        //Jump
-        else if (Input.GetKeyDown("space") && m_grounded && !m_rolling)
+        //ジャンプモーション
+        if (Input.GetKeyDown("space") && m_grounded && !m_rolling)
         {
             m_animator.SetTrigger("Jump");
             m_grounded = false;
@@ -187,7 +191,7 @@ public class PlayerScript : MonoBehaviour
             m_groundSensor.Disable(0.2f);
         }
 
-        //Run
+        //移動モーション
         else if (Mathf.Abs(inputX) > Mathf.Epsilon)
         {
             // Reset timer
@@ -195,7 +199,7 @@ public class PlayerScript : MonoBehaviour
             m_animator.SetInteger("AnimState", 1);
         }
 
-        //Idle
+        //待機モーション
         else
         {
             // Prevents flickering transitions to idle
@@ -208,6 +212,12 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
         {
             ThrowTreasure();
+        }
+
+        //死亡判定
+        if(this.transform.position.y < m_deadY)
+        {
+            OnDead();
         }
     }
 
@@ -267,6 +277,26 @@ public class PlayerScript : MonoBehaviour
             treasure.DisableColliderTemporarily();
         }
     }
+
+    /**
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     */
+    void OnDead()
+    {
+        //シーンに切り替わる前にプレイヤーのデータを受け渡す
+        GameManager.instance.SetScore(GetScore());
+        Debug.Log(GetScore());
+
+        //ゴールしたらシーン遷移(nullの場合はデバッグ用ログを出すだけ)
+        if (m_deadScene != null) SceneManager.LoadScene(m_deadScene, LoadSceneMode.Single);
+        else Debug.Log("GAMEOVER");
+    }
+
     /**
     * @brief 重量のセット
     *
