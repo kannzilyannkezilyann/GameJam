@@ -1,13 +1,26 @@
+/**
+ * @file   Result.cs
+ *
+ * @brief  リザルトに関するヘッダファイル
+ *
+ * @author 制作者名　福地貴翔
+ *
+ * @date   日付　2026/02/04
+ */
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+// クラスの定義 ===============================================================
+/**
+  * @brief リザルト
+  */
 
 public class Result : MonoBehaviour
 {
+// データメンバの宣言 -----------------------------------------------
     //遷移先のシーン
-
     [SerializeField] private string m_scene;
     //スコアテキスト
     [SerializeField] GameObject m_scoreText;
@@ -18,7 +31,14 @@ public class Result : MonoBehaviour
     //生成したテキスト
     CountUpText m_countUpText;
 
-    // Start is called before the first frame update
+    // メンバ関数の定義 -------------------------------------------------
+    /**
+     * @brief 生成時処理
+     *
+     * @param[in] なし
+     *
+     * @return なし
+     */
     void Start()
     {
         //スコアテキスト生成
@@ -32,7 +52,14 @@ public class Result : MonoBehaviour
         nextMoveText.transform.SetParent(m_canvas.transform, false);
     }
 
-    // Update is called once per frame
+
+    /**
+     * @brief 更新処理
+     *
+     * @param[in] なし
+     *
+     * @return なし
+     */
     void Update()
     {
         if (Input.GetKeyDown("space") && m_scoreText.GetComponent<CountUpText>().IsFinish())
