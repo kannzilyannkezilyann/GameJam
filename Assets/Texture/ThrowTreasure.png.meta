@@ -1,10 +1,22 @@
 fileFormatVersion: 2
-guid: f00108019188cd842a2e9b041942a08f
+guid: 45dfe7aa568d41f498d584f0a32e758d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -823033627879922679
-    second: Oxygen_0
+      213: -8268912908047730668
+    second: ThrowTreasure_0
+  - first:
+      213: -6291587039551597101
+    second: ThrowTreasure_1
+  - first:
+      213: -4593723288329369431
+    second: ThrowTreasure_2
+  - first:
+      213: 4973967584157082329
+    second: ThrowTreasure_3
+  - first:
+      213: -122392217862527978
+    second: ThrowTreasure_4
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -122,22 +134,22 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Oxygen_0
+      name: ThrowTreasure_0
       rect:
         serializedVersion: 2
-        x: 184
-        y: 14
-        width: 132
-        height: 432
+        x: 31
+        y: 31
+        width: 85
+        height: 75
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 904240ca64ff394f0800000000000000
-      internalID: -823033627879922679
+      spriteID: 4183c2d458bee3d80800000000000000
+      internalID: -8268912908047730668
       vertices: []
       indices: 
       edges: []
@@ -145,7 +157,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: c53a8b2b816a29d47a461757fddc48d9
     internalID: 0
     vertices: []
     indices: 
@@ -153,7 +165,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Oxygen_0: -823033627879922679
+      ThrowTreasure_0: -8268912908047730668
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
