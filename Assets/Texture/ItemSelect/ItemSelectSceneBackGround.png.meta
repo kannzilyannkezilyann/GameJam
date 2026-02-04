@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f00108019188cd842a2e9b041942a08f
+guid: c69502e7a75450c4dba654288264ae2b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -823033627879922679
-    second: Oxygen_0
+      213: -8786639245560621767
+    second: ItemSelectSceneBackGround_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -110,13 +110,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Oxygen_0
+      name: ItemSelectSceneBackGround_0
       rect:
         serializedVersion: 2
-        x: 184
-        y: 14
-        width: 132
-        height: 432
+        x: 0
+        y: 0
+        width: 1890
+        height: 1068
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -124,8 +124,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 904240ca64ff394f0800000000000000
-      internalID: -823033627879922679
+      spriteID: 9355ad6e8269f0680800000000000000
+      internalID: -8786639245560621767
       vertices: []
       indices: 
       edges: []
@@ -141,7 +141,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Oxygen_0: -823033627879922679
+      ItemSelectSceneBackGround_0: -8786639245560621767
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
