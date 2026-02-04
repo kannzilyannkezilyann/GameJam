@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /**
-* @file   TtleLogoScript.cs
+* @file   TitleLogoScript.cs
 *
 * @brief  タイトルロゴに関するソースファイル
 *
@@ -42,6 +42,7 @@ public class TitleLogoScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (m_player == null) return;
         if (!m_arrival)
         {
             this.transform.position = new Vector2(m_player.position.x - m_range, this.transform.position.y);

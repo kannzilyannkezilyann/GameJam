@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,7 +17,7 @@ using UnityEngine.SceneManagement;
 
 public class GoalGateContoroller : MonoBehaviour
 {
-    [SerializeField] private string m_ClearSceneName = "null"; ///< クリアした時に遷移するシーン名
+    [SerializeField] private string m_scene; ///< クリアした時に遷移するシーン
 
     /*
      * 
@@ -44,7 +43,6 @@ public class GoalGateContoroller : MonoBehaviour
      */
     void Update()
     {
-        
     }
 
     /*
@@ -65,8 +63,20 @@ public class GoalGateContoroller : MonoBehaviour
             //横からの衝突のみ判定し、ゴールとみなす
             if(Mathf.Abs(collision.relativeVelocity.x) > Mathf.Abs(collision.relativeVelocity.y))
             {
+                //シーンに切り替わる前にプレイヤーのデータを受け渡す
+                PlayerScript player = collision.gameObject.GetComponent<PlayerScript>();
+                if (player != null)
+                {
+                    GameManager.instance.SetScore(player.GetScore());
+                    Debug.Log(player.GetScore());
+                }
+                else
+                {
+                    Debug.Log("Playerはnullです");
+                }
+
                 //ゴールしたらシーン遷移(nullの場合はデバッグ用ログを出すだけ)
-                if (m_ClearSceneName != "null") SceneManager.LoadScene(m_ClearSceneName);
+                if (m_scene != null) SceneManager.LoadScene(m_scene, LoadSceneMode.Single);
                 else Debug.Log("ゴール！");
             }
 

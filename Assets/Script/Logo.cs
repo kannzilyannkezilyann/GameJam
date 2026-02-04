@@ -9,7 +9,6 @@
  */
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 // クラスの定義 ===============================================================
@@ -24,7 +23,7 @@ public class Logo : MonoBehaviour
 // データメンバの宣言 -----------------------------------------------
 
     //遷移先のシーン
-    [SerializeField] SceneAsset m_scene;
+    [SerializeField] private string m_scene;
     //表示するロゴ
     [SerializeField] Sprite[] m_logoSprites;
     //表示するためのスプライト
@@ -99,7 +98,7 @@ public class Logo : MonoBehaviour
                 else
                 {
                     //すべてのロゴが表示し終えたら遷移
-                    SceneManager.LoadScene(m_scene.name);
+                    SceneManager.LoadScene(m_scene, LoadSceneMode.Single);
                 }
 
             }

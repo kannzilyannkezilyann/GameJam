@@ -44,6 +44,7 @@ public class TitlePlayerScript : MonoBehaviour {
     private float               m_rollDuration = 8.0f / 14.0f;
     private float               m_rollCurrentTime;
 
+
     // Use this for initialization
     void Start ()
     {
@@ -54,6 +55,8 @@ public class TitlePlayerScript : MonoBehaviour {
         m_wallSensorR2 = transform.Find("WallSensor_R2").GetComponent<Sensor_HeroKnight>();
         m_wallSensorL1 = transform.Find("WallSensor_L1").GetComponent<Sensor_HeroKnight>();
         m_wallSensorL2 = transform.Find("WallSensor_L2").GetComponent<Sensor_HeroKnight>();
+
+        m_takeTresures = new List<Treasure_Info>();
     }
 
     // Update is called once per frame
@@ -142,9 +145,9 @@ public class TitlePlayerScript : MonoBehaviour {
         }
 
         //画面端に行ったら戻る
-        if(m_body2d.position.x >= 12.0f)
+        if(m_body2d.position.x >= 8.0f)
         {
-            m_body2d.position = new Vector2(-12.0f, m_body2d.position.y);
+            m_body2d.position = new Vector2(-8.0f, m_body2d.position.y);
         }
 
         //宝を捨てる
