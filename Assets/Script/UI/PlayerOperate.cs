@@ -34,9 +34,9 @@ public class PlayerOperate : MonoBehaviour
     //移動終了位置
     private Vector2 m_endPositoon;
     //移動開始角度Y
-    private float m_startRotation = 180.0f;
+    private float m_startRotation = 0.0f;
     //移動終了角度Y
-    private float m_endRotation = 0.0f;
+    private float m_endRotation = 180.0f;
     // メンバ関数の定義 -------------------------------------------------
 
     /**
@@ -50,6 +50,14 @@ public class PlayerOperate : MonoBehaviour
     {
         m_startPosition = m_openPostion;
         m_endPositoon = m_closePostion;
+        //最初のステージでハイスコアがなければオープンする
+        if (GameManager.instance.GetStageName() == GameManager.FIRST_STAGE)
+        {
+            if(GameManager.instance.GetHighScore(GameManager.instance.GetStageName()) == 0)
+            {
+                m_isOpenClose = true;
+            }
+        }
     }
 
     /**

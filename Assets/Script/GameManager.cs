@@ -18,6 +18,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+// クラス定数の宣言 -------------------------------------------------
+    //ステージ名
+    public const string FIRST_STAGE = "first";
+    public const string SECOND_STAGE = "second";
 // データメンバの宣言 -----------------------------------------------
     //ゲーム管理クラスインスタンス
     public static GameManager instance;
@@ -28,7 +32,7 @@ public class GameManager : MonoBehaviour
     //スコアデータ
     private ScoreData m_scoreData;
     //ステージ
-    private string m_stage = "first";
+    private string m_stage = FIRST_STAGE;
 // メンバ関数の定義 -------------------------------------------------
     /**
      * @brief 生成時処理
