@@ -68,6 +68,7 @@ public class GoalGateContoroller : MonoBehaviour
                 if (player != null)
                 {
                     GameManager.instance.SetCurrentScore(player.GetScore());
+                    player.RegisterTreasure();
                     Debug.Log(player.GetScore());
                 }
                 else

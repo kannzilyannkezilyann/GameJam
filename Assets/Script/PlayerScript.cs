@@ -32,7 +32,7 @@ public class PlayerScript : MonoBehaviour
     //合計スコア
     int m_score = 0;
     //入手宝配列
-    List<GameObject> m_takeTresures;
+    public List<GameObject> m_takeTresures ;
     //宝管理クラス
     [SerializeField] TreasureManager m_treasureManager;
     //false：タイトル用　true：ゲーム用
@@ -317,13 +317,28 @@ public class PlayerScript : MonoBehaviour
         {
             return;
         }
-        GameObject copy = Instantiate(treasureObject);
-        copy.SetActive(false);
+        //非表示
+        treasureObject.SetActive(false);
         //情報を記録
-        m_takeTresures.Add(copy);
+        m_takeTresures.Add(treasureObject);
         //重量加算
         AddMass(treasure.GetWeight());
         //スコア加算
         AddScore(treasure.GetScore());
+    }
+    /**
+    * @brief 宝を登録
+    *
+    * @param[in] なし
+    *
+    * @return なし
+    */
+    public void RegisterTreasure()
+    {
+        for (int i = 0; i < m_takeTresures.Count; i++)
+        {
+            Treasure treasure = m_takeTresures[i].GetComponent<Treasure>();
+            treasure.RegisterGetTreasure();
+        }
     }
 }

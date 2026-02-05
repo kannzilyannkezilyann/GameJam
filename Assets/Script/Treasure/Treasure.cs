@@ -19,6 +19,8 @@ using UnityEngine.UIElements;
 public class Treasure : MonoBehaviour
 {
 // データメンバの宣言 -----------------------------------------------
+    //種類ID
+    [SerializeField]  int m_masterID = 0;
     //重量
     [SerializeField] private float m_weight = 50;
     //加算スコア
@@ -31,6 +33,8 @@ public class Treasure : MonoBehaviour
     [SerializeField] GameObject m_scoreText;
     //プレイヤー判定オフ
     private bool m_playerCollisionOff = false;
+    //ID
+    private int m_id;
     // メンバ関数の定義 -------------------------------------------------
     /**
      * @brief 生成時処理
@@ -42,7 +46,8 @@ public class Treasure : MonoBehaviour
     void Start()
     {
         //重量によってRigidBodyのGravityScaleを変える
-        GetComponent<Rigidbody2D>().gravityScale *= m_weight/50; 
+        GetComponent<Rigidbody2D>().gravityScale *= m_weight/50;
+        m_id = TreasureManager.instance.CountUpID();
     }
 
     /**
@@ -97,11 +102,29 @@ public class Treasure : MonoBehaviour
                 }
             }
             
-            //消去
-            Destroy(gameObject);
         }
     }
 
+
+    /**
+     * @brief 管理クラスにプレイヤーにゲットされた宝を登録
+     *
+     * @param[in] なし
+     *
+     * @return なし
+     */
+    public void RegisterGetTreasure()
+    {
+        //管理クラスに登録
+        TreasureManager.TreasureData data = new TreasureManager.TreasureData();
+        data.masterID = m_masterID;
+        data.id = m_id;
+        data.weight = m_weight;
+        data.score = m_score;
+        data.scale = gameObject.transform.localScale;
+        TreasureManager.instance.RegistrationTreasure(data);
+
+    }
 
     /**
      * @brief プレイヤーの判定を一定時間オフにする
@@ -166,4 +189,5 @@ public class Treasure : MonoBehaviour
     {
         return m_score;
     }
+
 }

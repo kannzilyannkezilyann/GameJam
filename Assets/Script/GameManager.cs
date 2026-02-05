@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
 // データメンバの宣言 -----------------------------------------------
     //ゲーム管理クラスインスタンス
     public static GameManager instance;
+
     //スコア
     private int m_score =  0;
     //選択された
@@ -33,6 +34,8 @@ public class GameManager : MonoBehaviour
     private ScoreData m_scoreData;
     //ステージ
     private string m_stage = FIRST_STAGE;
+    //入手した宝リスト
+    List<GameObject> m_getTreasures = new();
 // メンバ関数の定義 -------------------------------------------------
     /**
      * @brief 生成時処理
@@ -175,4 +178,8 @@ public class GameManager : MonoBehaviour
     {
         m_stage = stage;
     }
+
+  
+
+
 }

@@ -21,6 +21,8 @@ public class CountUpText : MonoBehaviour
     int m_targetNumber;
     //増加数字
     int m_stepNumber;
+    //一旦停止ライン
+    int m_stopNumber = 0;
     //テキスト
     TextMeshProUGUI m_text;
 // メンバ関数の定義 -------------------------------------------------
@@ -64,9 +66,12 @@ public class CountUpText : MonoBehaviour
     void Update()
     {
         m_currentNumber += Mathf.RoundToInt(m_stepNumber * Time.deltaTime);
+        if(m_currentNumber > m_stopNumber)
+        {
+            m_currentNumber = m_stopNumber;
+        }
 
-
-        if (IsFinish())
+        if (IsFinish() || Input.GetKeyDown(KeyCode.Space))
         {
             m_currentNumber = m_targetNumber;
         }
@@ -81,9 +86,30 @@ public class CountUpText : MonoBehaviour
      * @return true  終了
      * @return true  未了
      */
-
     public bool IsFinish()
     {
         return (m_currentNumber >= m_targetNumber);
+    }
+    /**
+     * @brief 停止するラインを設定
+     *
+     * @param[in] なし
+     *
+     * @return なし
+     */
+    public void StopNumber(int stop)
+    {
+        m_stopNumber = stop;
+    }
+    /**
+     * @brief 停止するライン進行
+     *
+     * @param[in] なし
+     *
+     * @return なし
+     */
+    public void AddStopNumber(int stop)
+    {
+        m_stopNumber += stop;
     }
 }

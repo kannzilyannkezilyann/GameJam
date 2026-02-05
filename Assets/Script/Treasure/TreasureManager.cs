@@ -16,16 +16,32 @@ using UnityEngine;
   */
 public class TreasureManager : MonoBehaviour
 {
-    [System.Serializable]
     public struct TreasureData
     {
-        public string name;
+        public int masterID; //種類識別ID
+        public int id;//個別ID
+        public Vector3 scale;        // 個別スケール
+        public int score;            // 個別スコア
+        public float weight;           // 個別重量
+    }
+    [System.Serializable]
+    public class TreasurePrefabEntry
+    {
+        public int masterID;
         public GameObject prefab;
     }
-// データメンバの宣言 -----------------------------------------------
 
-    public TreasureData[] treasureList;
-    private Dictionary<string, GameObject> treasureDict;
+    // データメンバの宣言 -----------------------------------------------
+    [SerializeField]
+    private List<TreasurePrefabEntry> m_treasurePrefabList;
+
+    private Dictionary<int, GameObject> m_treasurePrefabDict;
+    //宝管理クラスインスタンス
+    public static TreasureManager instance;
+    private int m_countTreasureID = -1;
+
+    //ステージ上ある宝のデータ
+    private Dictionary<int,TreasureData> m_treasureData = new();
 // メンバ関数の定義 -------------------------------------------------
     /**
      * @brief 初期化処理
@@ -36,11 +52,20 @@ public class TreasureManager : MonoBehaviour
      */
     private void Awake()
     {
-        //宝登録
-        treasureDict = new Dictionary<string, GameObject>();
-        foreach (var t in treasureList)
+        if (instance == null)
         {
-            treasureDict[t.name] = t.prefab;
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+
+            m_treasurePrefabDict = new Dictionary<int, GameObject>();
+            foreach (var e in m_treasurePrefabList)
+            {
+                m_treasurePrefabDict[e.masterID] = e.prefab;
+            }
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
 
@@ -51,13 +76,71 @@ public class TreasureManager : MonoBehaviour
      *
      * @return なし
      */
-    public GameObject SpawnTreasure(string name, Vector3 position)
+    public GameObject GetPrefab(int masterID)
     {
-        if (!treasureDict.TryGetValue(name, out GameObject prefab))
-        {
-            Debug.LogError($"Treasure {name} が見つかりません");
-            return null;
-        }
-        return Instantiate(prefab, position, Quaternion.identity);
+        return m_treasurePrefabDict[masterID];
     }
+
+
+    /**
+     * @brief プレイヤーが取得した宝のデータの登録
+     *
+     * @param[in] data 宝のデータ
+     *
+     * @return なし
+     */
+    public void RegistrationTreasure(TreasureData data)
+    {
+        m_treasureData[data.id] = data;
+    }
+
+    /**
+     * @brief プレイヤーが取得した宝のデータの解除
+     *
+     * @param[in] data 宝のデータ
+     *
+     * @return なし
+     */
+    public void UnRegisterTreasure()
+    {
+        m_treasureData.Clear();
+    }
+
+    /**
+     * @brief プレイヤーが取得した宝のデータ
+     *
+     * @param[in] なし
+     *
+     * @return 宝データ
+     */
+    public Dictionary<int,TreasureData> GetGotTreasureData()
+    {
+        return m_treasureData;
+    }
+
+    /**
+     * @brief 加算したIDを取得
+     *
+     * @param[in] なし
+     *
+     * @return ID
+     */
+    public int CountUpID()
+    {
+        ++m_countTreasureID;
+        return m_countTreasureID;
+    }
+
+    /**
+     * @brief IDをリセット
+     *
+     * @param[in] なし
+     *
+     * @return なし
+     */
+    public void ResetID()
+    {
+        m_countTreasureID = 0;
+    }
+
 }
