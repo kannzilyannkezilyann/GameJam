@@ -14,7 +14,6 @@ using UnityEngine;
 /**
   * @brief スコアデータ
   */
-
 public class ScoreData : MonoBehaviour
 {
 // データメンバの宣言 -----------------------------------------------
@@ -72,12 +71,13 @@ public class ScoreData : MonoBehaviour
         //現在のハイスコア取得
         int currentHighScore = GetHighScore(stage);
         //ハイスコアか比較
-        if (currentHighScore > score) 
+        if (currentHighScore >= score) 
         {
             return false;
         }
         //スコアを保存
         PlayerPrefs.SetInt(stage, score);
+        PlayerPrefs.Save();
         return true;
     }
 }
