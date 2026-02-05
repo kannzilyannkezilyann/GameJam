@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: f00108019188cd842a2e9b041942a08f
+guid: 5dc9a71bf1b06db46a1198b7ba601a5b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -823033627879922679
-    second: Oxygen_0
+      213: 4572374564011507219
+    second: LRKey_0
+  - first:
+      213: -5252558131505948448
+    second: LRKey_1
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -122,22 +125,22 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Oxygen_0
+      name: LRKey_0
       rect:
         serializedVersion: 2
-        x: 184
-        y: 14
-        width: 132
-        height: 432
+        x: 28
+        y: 16
+        width: 354
+        height: 169
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 904240ca64ff394f0800000000000000
-      internalID: -823033627879922679
+      spriteID: 31effe3c076547f30800000000000000
+      internalID: 4572374564011507219
       vertices: []
       indices: 
       edges: []
@@ -145,7 +148,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 83ce974f256f2fd4fb47a22813ca008e
     internalID: 0
     vertices: []
     indices: 
@@ -153,7 +156,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Oxygen_0: -823033627879922679
+      LRKey_0: 4572374564011507219
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
