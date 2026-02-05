@@ -35,6 +35,12 @@ public class Treasure : MonoBehaviour
     private bool m_playerCollisionOff = false;
     //ID
     private int m_id;
+    //取得時の効果音
+    [SerializeField] private GameObject m_getSE;
+    //ID
+    private int m_id;
+    //取得時の効果音
+    [SerializeField] private GameObject m_getSE;
     // メンバ関数の定義 -------------------------------------------------
     /**
      * @brief 生成時処理
@@ -82,6 +88,8 @@ public class Treasure : MonoBehaviour
         {
             //エフェクト生成
             GameObject effect = Instantiate(m_destroyEffect, gameObject.transform.position, Quaternion.identity);
+            //効果音の生成
+            Instantiate(m_getSE, gameObject.transform.position, Quaternion.identity);
             //エフェクトの大きさを調整
             float scaleX = this.transform.localScale.x * m_destroyEffectScale;
             float scaleY = this.transform.localScale.y * m_destroyEffectScale;

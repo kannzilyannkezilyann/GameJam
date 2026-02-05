@@ -13,6 +13,11 @@ using UnityEngine;
 
 public class ItemSelectPlayerScript : MonoBehaviour
 {
+    //歩行時のSE
+    [SerializeField] AudioClip m_walkSE;
+
+    //音楽を再生するためのコンポーネント
+    private AudioSource m_playerAudioSource;
     //停止位置
     [SerializeField] float m_stopPoint = -2.3f;
     //停止位置に到達したかどうかのフラグ
@@ -45,6 +50,7 @@ public class ItemSelectPlayerScript : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        m_playerAudioSource = GetComponent<AudioSource>();
         m_animator = GetComponent<Animator>();
         m_body2d = GetComponent<Rigidbody2D>();
         m_groundSensor = transform.Find("GroundSensor").GetComponent<Sensor_HeroKnight>();
@@ -124,8 +130,14 @@ public class ItemSelectPlayerScript : MonoBehaviour
             // Reset timer
             m_delayToIdle = 0.05f;
             m_animator.SetInteger("AnimState", 1);
-        }
 
+            if (!m_playerAudioSource.isPlaying)
+            {
+                m_playerAudioSource.clip = m_walkSE;
+                m_playerAudioSource.loop = true;
+                m_playerAudioSource.Play();
+            }
+        }
         //Idle
         else
         {
@@ -133,6 +145,7 @@ public class ItemSelectPlayerScript : MonoBehaviour
             m_delayToIdle -= Time.deltaTime;
             if (m_delayToIdle < 0)
                 m_animator.SetInteger("AnimState", 0);
+            m_playerAudioSource.Stop();
         }
 
         Debug.Log("start");
@@ -157,4 +170,17 @@ public class ItemSelectPlayerScript : MonoBehaviour
             dust.transform.localScale = new Vector3(m_facingDirection, 1, 1);
         }
     }
+
+    /**
+    * @brief 指定されたポイントに到達したかどうかのフラグを取得する処理
+    *
+    * @param[in] なし
+    *
+    * @return なし
+    */
+    public bool GetIsStopPoint()
+    {
+        return m_isStopPoint;
+    }
+
 }
