@@ -100,6 +100,9 @@ public class PlayerScript : MonoBehaviour
             if (m_soundes[i].audioSource == null) m_soundes[i].audioSource = GetComponent<AudioSource>();
         }//初期化
         m_itemKind = ItemKinds.NON;
+
+        TreasureManager.instance.UnRegisterTreasure();
+        TreasureManager.instance.ResetID();
     }
 
     // Update is called once per frame
