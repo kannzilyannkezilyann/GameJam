@@ -96,12 +96,12 @@ public class PlayerScript : MonoBehaviour
         //リスト初期化
         m_takeTresures = new List<GameObject>();
         //初期化
-        m_hasItem = GameManager.instance.GetSelectItem();
+        m_itemKind = GameManager.instance.GetSelectItem();
         for (int i = 0; i < m_soundes.Length; i++)
         {
             if (m_soundes[i].audioSource == null) m_soundes[i].audioSource = GetComponent<AudioSource>();
         }//初期化
-        m_hasItem = ItemKinds.NON;
+        m_itemKind = ItemKinds.NON;
     }
 
     // Update is called once per frame
