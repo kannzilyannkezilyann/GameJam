@@ -20,13 +20,30 @@ public enum ItemKinds
     OXYGEN_CYLINBER,
     BALLOON
 }
-public class PlayerScript : MonoBehaviour 
+public class PlayerScript : MonoBehaviour
 {
+    public enum SoundKinds : int
+    {
+        WALK,
+        JUMP,
+        LANFING,
+        THROW_TREASURE
+    }
+
+    [System.Serializable]
+    struct Soundes
+    {
+        public AudioClip SE;
+        public AudioSource audioSource;
+        public SoundKinds soundKinds;
+    }
     // クラス定数の宣言 -------------------------------------------------
     //プレイヤーの重さ
     public const float PLAYER_WIEGHT = 100.0f;
-    
-// データメンバの宣言 -----------------------------------------------
+
+    // データメンバの宣言 -----------------------------------------------
+    //SE群
+    [SerializeField] private Soundes[] m_soundes;
     //現在の重さ
     float m_mass = 100.0f;
     //合計スコア
@@ -69,7 +86,11 @@ public class PlayerScript : MonoBehaviour
         //リスト初期化
         m_takeTresures = new List<GameObject>();
         //初期化
-        m_hasItem = ItemKinds.NON;
+        m_hasItem = GameManager.instance.GetSelectItem();
+        for(int i = 0; i < m_soundes.Length; i++)
+        {
+            if(m_soundes[i].audioSource == null) m_soundes[i].audioSource = GetComponent<AudioSource>();
+        }
     }
 
     // Update is called once per frame
@@ -88,6 +109,8 @@ public class PlayerScript : MonoBehaviour
         {
             m_grounded = true;
             m_animator.SetBool("Grounded", m_grounded);
+            m_soundes[(int)SoundKinds.LANFING].audioSource.PlayOneShot(m_soundes[(int)SoundKinds.LANFING].SE);
+
         }
 
         //Check if character just started falling
@@ -132,28 +155,44 @@ public class PlayerScript : MonoBehaviour
             m_animator.SetBool("Grounded", m_grounded);
             m_body2d.velocity = new Vector2(m_body2d.velocity.x, m_jumpForce * speedIndex);
             m_groundSensor.Disable(0.2f);
+
+            m_soundes[(int)SoundKinds.JUMP].audioSource.PlayOneShot(m_soundes[(int)SoundKinds.JUMP].SE);
+            m_soundes[(int)SoundKinds.WALK].audioSource.Pause();
         }
 
         //Run
-        else if (Mathf.Abs(inputX) > Mathf.Epsilon)
+        else if (Mathf.Abs(inputX) > Mathf.Epsilon && m_grounded)
         {
             // Reset timer
             m_delayToIdle = 0.05f;
             m_animator.SetInteger("AnimState", 1);
+
+            if (!m_soundes[(int)SoundKinds.WALK].audioSource.isPlaying)
+            {
+                m_soundes[(int)SoundKinds.WALK].audioSource.clip = m_soundes[(int)SoundKinds.WALK].SE;
+                m_soundes[(int)SoundKinds.WALK].audioSource.Play();
+            }
         }
+
+
 
         //Idle
         else
         {
             // Prevents flickering transitions to idle
             m_delayToIdle -= Time.deltaTime;
-                if(m_delayToIdle < 0)
-                    m_animator.SetInteger("AnimState", 0);
+            if (m_delayToIdle < 0)
+                m_animator.SetInteger("AnimState", 0);
+            if (m_soundes[(int)SoundKinds.WALK].audioSource.isPlaying)
+            {
+                m_soundes[(int)SoundKinds.WALK].audioSource.Pause();
+            }
         }
 
         //宝を捨てる
         if (Input.GetKeyDown(KeyCode.E))
         {
+            m_soundes[(int)SoundKinds.THROW_TREASURE].audioSource.PlayOneShot(m_soundes[(int)SoundKinds.THROW_TREASURE].SE);
             ThrowTreasure();
         }
     }

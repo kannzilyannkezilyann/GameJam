@@ -127,6 +127,7 @@ MonoBehaviour:
   m_destroyEffect: {fileID: 7331985587958883607, guid: a9fa427f26f598640a009f1200942a58, type: 3}
   m_destroyEffectScale: 8.83
   m_scoreText: {fileID: 7968831517195487150, guid: d867645a35f21054aa8090577e00dfff, type: 3}
+  m_getSE: {fileID: 6442781347286849127, guid: cc1151ddbc7825c4a91b2d618c7df619, type: 3}
 --- !u!50 &2156794698193076289
 Rigidbody2D:
   serializedVersion: 4

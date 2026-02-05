@@ -23,8 +23,8 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     //スコア
     private int m_score =  0;
-    //選択された
-    private ItemKinds m_selectItem;
+    //選択されたアイテム
+    private ItemKinds m_selectItem = ItemKinds.NON;
 
     // メンバ関数の定義 -------------------------------------------------
     /**
