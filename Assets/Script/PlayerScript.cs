@@ -300,7 +300,7 @@ public class PlayerScript : MonoBehaviour
     void OnDead()
     {
         //シーンに切り替わる前にプレイヤーのデータを受け渡す
-        GameManager.instance.SetScore(GetScore());
+        GameManager.instance.SetCurrentScore(GetScore());
         Debug.Log(GetScore());
 
         //ゴールしたらシーン遷移(nullの場合はデバッグ用ログを出すだけ)
