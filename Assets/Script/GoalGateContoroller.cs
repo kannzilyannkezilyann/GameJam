@@ -67,7 +67,7 @@ public class GoalGateContoroller : MonoBehaviour
                 PlayerScript player = collision.gameObject.GetComponent<PlayerScript>();
                 if (player != null)
                 {
-                    GameManager.instance.SetScore(player.GetScore());
+                    GameManager.instance.SetCurrentScore(player.GetScore());
                     Debug.Log(player.GetScore());
                 }
                 else

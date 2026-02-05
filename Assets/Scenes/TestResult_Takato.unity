@@ -312,7 +312,7 @@ MonoBehaviour:
   m_scene: TitleScene
   m_scoreText: {fileID: 2260505015990369077, guid: b18b41e2eb990e2429511255a8b80a7a, type: 3}
   m_nextMove: {fileID: 7608676934437336610, guid: 05f2d7aa9830dcd4796107e3660c4fc0, type: 3}
-  m_highScoreText: {fileID: 0}
+  m_highScoreText: {fileID: 827741086}
   m_canvas: {fileID: 1120397419}
 --- !u!4 &356737209
 Transform:

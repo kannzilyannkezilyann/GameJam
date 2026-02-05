@@ -46,7 +46,8 @@ public class Result : MonoBehaviour
     {
         //スコアテキスト生成
         GameObject scoreText = Instantiate(m_scoreText);
-        scoreText.GetComponent<CountUpText>().Initialize(0, GameManager.instance.GetScore(), 800);
+        m_countUpText = scoreText.GetComponent<CountUpText>();
+        m_countUpText.Initialize(0, GameManager.instance.GetCurrentScore(), 800);
         scoreText.transform.SetParent(m_canvas.transform, false);
         Debug.Log("Initialize OK");
         //キー案内テキスト生成
@@ -68,7 +69,7 @@ public class Result : MonoBehaviour
     void Update()
     {
         //スコアカウントアップが終わっていなかったら
-        if (!m_scoreText.GetComponent<CountUpText>().IsFinish())
+        if (!m_countUpText.IsFinish())
         {
             //飛ばす
             return;
@@ -78,9 +79,9 @@ public class Result : MonoBehaviour
         if (!m_highScoreChecked)
         {
             //ハイスコアを更新したか
-            //bool isHighScore = GameManager.instance.GetScoreData().SetHighScore(GameManager.instance.GetStageName(),GameManager.instance.GetScore());
+            bool isHighScore = GameManager.instance.SetHighScore(GameManager.instance.GetStageName(),GameManager.instance.GetCurrentScore());
             //テキストをアクティブ状態を設定
-            //m_highScoreText.SetActive(isHighScore);
+            m_highScoreText.SetActive(isHighScore);
             
             //ハイスコアかチェックした
             m_highScoreChecked = true;

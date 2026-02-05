@@ -1,3 +1,12 @@
+/**
+ * @file   CountUpText.cs
+ *
+ * @brief  数字カウントアップに関するヘッダファイル
+ *
+ * @author 制作者名　福地貴翔
+ *
+ * @date   日付　2026/02/04
+ */
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;

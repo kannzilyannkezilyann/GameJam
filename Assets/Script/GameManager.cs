@@ -5,7 +5,7 @@
  *
  * @author 制作者名　福地貴翔
  *
- * @date   日付　2026/02/02
+ * @date   日付　2026/02/03
  */
 using System.Collections;
 using System.Collections.Generic;
@@ -25,8 +25,11 @@ public class GameManager : MonoBehaviour
     private int m_score =  0;
     //選択された
     private ItemKinds m_selectItem;
-
-    // メンバ関数の定義 -------------------------------------------------
+    //スコアデータ
+    private ScoreData m_scoreData;
+    //ステージ
+    private string m_stage = "first";
+// メンバ関数の定義 -------------------------------------------------
     /**
      * @brief 生成時処理
      *
@@ -36,7 +39,8 @@ public class GameManager : MonoBehaviour
      */
     void Start()
     {
-        
+        //スコアデータ管理スクリプト作成
+        m_scoreData = gameObject.AddComponent<ScoreData>();
     }
 
     void Awake()
@@ -72,27 +76,52 @@ public class GameManager : MonoBehaviour
         }
 
     /**
-    * @brief スコアの設定
+    * @brief 現在スコアの設定
     *
     * @param[in] なし
     *
     * @return なし
     */
-    public void SetScore(int score)
+    public void SetCurrentScore(int score)
     {
         m_score = score;
     }
 
     /**
-    * @brief スコアの取得
+    * @brief 現在スコアの取得
     *
     * @param[in] なし
     *
-    * @return なし
+    * @return スコア
     */
-    public int GetScore()
+    public int GetCurrentScore()
     {
         return m_score;
+    }
+
+    /**
+    * @brief ハイスコアの設定
+    *
+    * @param[in] stage  ハイスコアを設定するステージ
+    *
+    * @return　true  ハイスコアだった
+    * @return　false ハイスコアではなかった
+    */
+    public bool SetHighScore(string stage,int score)
+    {
+        return m_scoreData.SetHighScore(stage,score);
+    }
+
+    /**
+    * @brief ハイスコアの取得
+    *
+    * @param[in] stage  ハイスコアを取得するステージ
+    *
+    * @return 引数のステージのハイスコア
+    */
+    public int GetHighScore(string stage)
+    {
+        return m_scoreData.GetHighScore(stage);
     }
 
     /**
@@ -112,10 +141,34 @@ public class GameManager : MonoBehaviour
     *
     * @param[in] なし
     *
-    * @return なし
+    * @return アイテム
     */
     public ItemKinds GetSelectItem()
     {
         return m_selectItem;
+    }
+
+    /**
+    * @brief 選択したステージ名の取得
+    *
+    * @param[in] なし
+    *
+    * @return ステージ名
+    */
+    public string GetStageName()
+    {
+        return m_stage;
+    }
+
+    /**
+    * @brief 選択したステージ名の設定
+    *
+    * @param[in] stage  ステージ
+    *
+    * @return なし
+    */
+    public void SetStageName(string stage)
+    {
+        m_stage = stage;
     }
 }
