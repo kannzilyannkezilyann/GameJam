@@ -10,92 +10,84 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
-// アイテムの列挙体の宣言 -------------------------------------------
 public enum ItemKinds
 {
     NON,
     TORCH,
-    OXYGEN_CYLINBER,
-    BALLOON
+    OXYGEN_CYLINDER,
+    BALOON,
 }
-public class PlayerScript : MonoBehaviour
-{
-    public enum SoundKinds : int
-    {
-        WALK,
-        JUMP,
-        LANFING,
-        THROW_TREASURE
-    }
 
-    [System.Serializable]
-    struct Soundes
-    {
-        public AudioClip SE;
-        public AudioSource audioSource;
-        public SoundKinds soundKinds;
-    }
-    // クラス定数の宣言 -------------------------------------------------
+public class PlayerScript : MonoBehaviour 
+{
+// クラス定数の宣言 -------------------------------------------------
     //プレイヤーの重さ
     public const float PLAYER_WIEGHT = 100.0f;
-
-    // データメンバの宣言 -----------------------------------------------
-    //SE群
-    [SerializeField] private Soundes[] m_soundes;
+    
+// データメンバの宣言 -----------------------------------------------
     //現在の重さ
     float m_mass = 100.0f;
     //合計スコア
     int m_score = 0;
     //入手宝配列
-    List<GameObject> m_takeTresures;
+    public List<GameObject> m_takeTresures ;
     //宝管理クラス
     [SerializeField] TreasureManager m_treasureManager;
     //false：タイトル用　true：ゲーム用
     [SerializeField] bool m_flag;
-    //プレイヤーが所持しているアイテム
-    private ItemKinds m_hasItem;
+    ///死亡した時に遷移するシーン
+    [SerializeField] private string m_deadScene; 
 
-    [SerializeField] float      m_speed = 4.0f;
-    [SerializeField] float      m_jumpForce = 7.5f;
-    [SerializeField] float      m_rollForce = 6.0f;
+    [SerializeField] float      m_speed = 4.0f;      ///< 移動速度
+    [SerializeField] float      m_jumpForce = 7.5f;  ///< ジャンプ力
+    [SerializeField] float      m_rollForce = 6.0f;  ///< 回転力
     [SerializeField] bool       m_noBlood = false;
     [SerializeField] GameObject m_slideDust;
+    [SerializeField] float m_deadY;                  ///< プレイヤーが死亡するY座標
 
-    private Animator            m_animator;
+    [SerializeField] private ItemKinds m_itemKind;   ///< プレイヤーの所持アイテム
+
+
+    private Animator            m_animator; ///< アニメーター
     private Rigidbody2D         m_body2d;
     private Sensor_HeroKnight   m_groundSensor;
+    private Sensor_HeroKnight   m_wallSensorR1;
     private Sensor_HeroKnight   m_wallSensorR2;
+    private Sensor_HeroKnight   m_wallSensorL1;
     private Sensor_HeroKnight   m_wallSensorL2;
+    private bool                m_isWallSliding = false;
     private bool                m_grounded = false;
     private bool                m_rolling = false;
     private int                 m_facingDirection = 1;
+    private int                 m_currentAttack = 0;
+    private float               m_timeSinceAttack = 0.0f;
     private float               m_delayToIdle = 0.0f;
     private float               m_rollDuration = 8.0f / 14.0f;
     private float               m_rollCurrentTime;
-
+  
     // Use this for initialization
     void Start ()
     {
         m_animator = GetComponent<Animator>();
         m_body2d = GetComponent<Rigidbody2D>();
         m_groundSensor = transform.Find("GroundSensor").GetComponent<Sensor_HeroKnight>();
+        m_wallSensorR1 = transform.Find("WallSensor_R1").GetComponent<Sensor_HeroKnight>();
         m_wallSensorR2 = transform.Find("WallSensor_R2").GetComponent<Sensor_HeroKnight>();
+        m_wallSensorL1 = transform.Find("WallSensor_L1").GetComponent<Sensor_HeroKnight>();
         m_wallSensorL2 = transform.Find("WallSensor_L2").GetComponent<Sensor_HeroKnight>();
         //リスト初期化
         m_takeTresures = new List<GameObject>();
-        //初期化
-        m_hasItem = GameManager.instance.GetSelectItem();
-        for(int i = 0; i < m_soundes.Length; i++)
-        {
-            if(m_soundes[i].audioSource == null) m_soundes[i].audioSource = GetComponent<AudioSource>();
-        }
     }
 
     // Update is called once per frame
     void Update ()
     {
+        // Increase timer that controls attack combo
+        m_timeSinceAttack += Time.deltaTime;
+
         // Increase timer that checks roll duration
         if(m_rolling)
             m_rollCurrentTime += Time.deltaTime;
@@ -109,8 +101,6 @@ public class PlayerScript : MonoBehaviour
         {
             m_grounded = true;
             m_animator.SetBool("Grounded", m_grounded);
-            m_soundes[(int)SoundKinds.LANFING].audioSource.PlayOneShot(m_soundes[(int)SoundKinds.LANFING].SE);
-
         }
 
         //Check if character just started falling
@@ -140,14 +130,69 @@ public class PlayerScript : MonoBehaviour
         }
 
         float speedIndex = 1 / (m_mass / 100.0f);
-        // Move
+        // 移動
         if (!m_rolling )
             m_body2d.velocity = new Vector2(inputX * m_speed * speedIndex, m_body2d.velocity.y);
 
         //Set AirSpeed in animator
         m_animator.SetFloat("AirSpeedY", m_body2d.velocity.y);
 
-        //Jump
+        // -- Handle Animations --
+        //Wall Slide
+        //m_isWallSliding = (m_wallSensorR1.State() && m_wallSensorR2.State()) || (m_wallSensorL1.State() && m_wallSensorL2.State());
+        //m_animator.SetBool("WallSlide", m_isWallSliding);
+
+        //Death
+        //if (Input.GetKeyDown("e") && !m_rolling)
+        //{
+        //    m_animator.SetBool("noBlood", m_noBlood);
+        //    m_animator.SetTrigger("Death");
+        //}
+            
+        //Hurt
+        //else if (Input.GetKeyDown("q") && !m_rolling)
+        //    m_animator.SetTrigger("Hurt");
+
+        //Attack
+        //if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f && !m_rolling && m_flag)
+        //{
+        //    m_currentAttack++;
+
+        //    // Loop back to one after third attack
+        //    if (m_currentAttack > 3)
+        //        m_currentAttack = 1;
+
+        //    // Reset Attack combo if time since last attack is too large
+        //    if (m_timeSinceAttack > 1.0f)
+        //        m_currentAttack = 1;
+
+        //    // Call one of three attack animations "Attack1", "Attack2", "Attack3"
+        //    m_animator.SetTrigger("Attack" + m_currentAttack);
+
+        //    // Reset timer
+        //    m_timeSinceAttack = 0.0f;
+        //}
+
+        // Block
+        //else if (Input.GetMouseButtonDown(1) && !m_rolling && m_flag)
+        //{
+        //    m_animator.SetTrigger("Block");
+        //    m_animator.SetBool("IdleBlock", true);
+        //}
+
+        //else if (Input.GetMouseButtonUp(1) && m_flag)
+        //    m_animator.SetBool("IdleBlock", false);
+
+        // ローリング
+        //if (Input.GetKeyDown("left shift") && !m_rolling && !m_isWallSliding && m_flag)
+        //{
+        //    m_rolling = true;
+        //    m_animator.SetTrigger("Roll");
+        //    m_body2d.velocity = new Vector2(m_facingDirection * m_rollForce, m_body2d.velocity.y);
+        //}
+            
+
+        //ジャンプモーション
         if (Input.GetKeyDown("space") && m_grounded && !m_rolling)
         {
             m_animator.SetTrigger("Jump");
@@ -155,45 +200,35 @@ public class PlayerScript : MonoBehaviour
             m_animator.SetBool("Grounded", m_grounded);
             m_body2d.velocity = new Vector2(m_body2d.velocity.x, m_jumpForce * speedIndex);
             m_groundSensor.Disable(0.2f);
-
-            m_soundes[(int)SoundKinds.JUMP].audioSource.PlayOneShot(m_soundes[(int)SoundKinds.JUMP].SE);
-            m_soundes[(int)SoundKinds.WALK].audioSource.Pause();
         }
 
-        //Run
-        else if (Mathf.Abs(inputX) > Mathf.Epsilon && m_grounded)
+        //移動モーション
+        else if (Mathf.Abs(inputX) > Mathf.Epsilon)
         {
             // Reset timer
             m_delayToIdle = 0.05f;
             m_animator.SetInteger("AnimState", 1);
-
-            if (!m_soundes[(int)SoundKinds.WALK].audioSource.isPlaying)
-            {
-                m_soundes[(int)SoundKinds.WALK].audioSource.clip = m_soundes[(int)SoundKinds.WALK].SE;
-                m_soundes[(int)SoundKinds.WALK].audioSource.Play();
-            }
         }
 
-
-
-        //Idle
+        //待機モーション
         else
         {
             // Prevents flickering transitions to idle
             m_delayToIdle -= Time.deltaTime;
-            if (m_delayToIdle < 0)
-                m_animator.SetInteger("AnimState", 0);
-            if (m_soundes[(int)SoundKinds.WALK].audioSource.isPlaying)
-            {
-                m_soundes[(int)SoundKinds.WALK].audioSource.Pause();
-            }
+                if(m_delayToIdle < 0)
+                    m_animator.SetInteger("AnimState", 0);
         }
 
         //宝を捨てる
         if (Input.GetKeyDown(KeyCode.E))
         {
-            m_soundes[(int)SoundKinds.THROW_TREASURE].audioSource.PlayOneShot(m_soundes[(int)SoundKinds.THROW_TREASURE].SE);
             ThrowTreasure();
+        }
+
+        //死亡判定
+        if(this.transform.position.y < m_deadY)
+        {
+            OnDead();
         }
     }
 
@@ -253,6 +288,26 @@ public class PlayerScript : MonoBehaviour
             treasure.DisableColliderTemporarily();
         }
     }
+
+    /**
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     */
+    void OnDead()
+    {
+        //シーンに切り替わる前にプレイヤーのデータを受け渡す
+        GameManager.instance.SetCurrentScore(GetScore());
+        Debug.Log(GetScore());
+
+        //ゴールしたらシーン遷移(nullの場合はデバッグ用ログを出すだけ)
+        if (m_deadScene != null) SceneManager.LoadScene(m_deadScene, LoadSceneMode.Single);
+        else Debug.Log("GAMEOVER");
+    }
+
     /**
     * @brief 重量のセット
     *
@@ -312,31 +367,6 @@ public class PlayerScript : MonoBehaviour
     {
         return m_score;
     }
-
-    /**
-    * @brief アイテムの取得
-    *
-    * @param[in] なし
-    *
-    * @return 現在プレイヤーが所持しているアイテム
-    */
-    public ItemKinds GetItem()
-    {
-        return m_hasItem;
-    }
-
-    /**
-    * @brief アイテムのセット
-    *
-    * @param[in] なし
-    *
-    * @return なし
-    */
-    public void SetItem(ItemKinds item)
-    {
-        m_hasItem = item;
-    }
-
     /**
     * @brief 宝石を手に入れる
     *
@@ -356,13 +386,29 @@ public class PlayerScript : MonoBehaviour
         {
             return;
         }
-        GameObject copy = Instantiate(treasureObject);
-        copy.SetActive(false);
+        //非表示
+        treasureObject.SetActive(false);
         //情報を記録
-        m_takeTresures.Add(copy);
+        m_takeTresures.Add(treasureObject);
         //重量加算
         AddMass(treasure.GetWeight());
         //スコア加算
         AddScore(treasure.GetScore());
     }
+    /**
+    * @brief 宝を登録
+    *
+    * @param[in] なし
+    *
+    * @return なし
+    */
+    public void RegisterTreasure()
+    {
+        for (int i = 0; i < m_takeTresures.Count; i++)
+        {
+            Treasure treasure = m_takeTresures[i].GetComponent<Treasure>();
+            treasure.RegisterGetTreasure();
+        }
+    }
+    public ItemKinds GetItem() { return m_itemKind; }
 }
