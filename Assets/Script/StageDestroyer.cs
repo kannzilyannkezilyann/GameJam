@@ -19,7 +19,7 @@ public class StageDestroyer : MonoBehaviour
 {
     [SerializeField] private Tilemap[] m_tileMaps; ///< 崩すタイルマップたち
     [SerializeField] float m_timer = 0f; ///< タイマー
-    [SerializeField] int m_destroyInterval = 5; ///< ブロックを破壊する間隔（秒単位）
+    [SerializeField] float m_destroyInterval = 5f; ///< ブロックを破壊する間隔（秒単位）
     [SerializeField] int m_destroyCount = 1; ///< ステージを一気に破壊する列数
 
     [SerializeField] GameObject m_fallTileBlock; ///< 呼び出す落下オブジェクト
@@ -45,9 +45,14 @@ public class StageDestroyer : MonoBehaviour
 
         foreach (var tileMap in m_tileMaps)
         {
+            //そもそも無ければスキップして次へ
             if (tileMap == null) continue;
 
+            //調べる前に不要な空のセルを圧縮する（boundsの弊害になるため）
+            tileMap.CompressBounds();
+
             var bounds = tileMap.cellBounds;
+
             if (bounds.xMin < m_globalMinX) m_globalMinX = bounds.xMin;
             if (bounds.xMax > m_globalMaxX) m_globalMaxX = bounds.xMax;
         }
@@ -71,7 +76,6 @@ public class StageDestroyer : MonoBehaviour
             for (int i = 0; i < m_destroyCount; i++)
             {
                 int globalX = m_globalMinX + m_currentDestroyColumn;
-
 
                 DestroyStage(globalX);
                 m_currentDestroyColumn++;
@@ -99,7 +103,6 @@ public class StageDestroyer : MonoBehaviour
                 //X,Yを位置に変換
                 Vector3Int pos = new Vector3Int(globalX, y, 0);
 
-
                 // タイルが存在する場合のみ破壊
                 if (tileMap.HasTile(pos))
                 {
@@ -125,7 +128,8 @@ public class StageDestroyer : MonoBehaviour
                         rigidBody.angularVelocity = Random.Range(5.0f, -5.0f);
                     }
 
-                    //元あったタイルはnullにする
+
+                    //元あったタイルはnullにする（そうすれば消える）
                     tileMap.SetTile(pos, null);
                 }
             }

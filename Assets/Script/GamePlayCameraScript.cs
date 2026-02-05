@@ -24,7 +24,13 @@ public class GamePlayCameraScript : MonoBehaviour
 
     [SerializeField] private float m_cameraMoveYBorder; ///< カメラを動かすYのボーダー
 
+    [SerializeField] private float m_shakeMaxPower = 0; ///< カメラを揺らすパワー(最大値)
+    [SerializeField] private float m_shakeinterval = 5; ///< カメラを揺らす間隔
+
     private float m_firstPosY; ///< 最初のYの位置
+
+    private float m_shakePower = 0; ///< 現在の揺れの強さ
+    private float m_shakeTimer = 0; ///< カメラを揺らすタイマー
 
     /**
     * @brief 初期化処理
@@ -57,16 +63,12 @@ public class GamePlayCameraScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-    }
-     private void LateUpdate()
-    {
-
+        //ターゲットの位置を指定（とりあえず現在位置で初期化）
         Vector3 targetPos = new Vector3(
-              transform.position.x,
-              transform.position.y,
-              transform.position.z
-          );
+          transform.position.x,
+          transform.position.y,
+          transform.position.z
+      );
 
 
         //カメラのX座標が外に出ないようにする
@@ -74,7 +76,7 @@ public class GamePlayCameraScript : MonoBehaviour
 
 
         //カメラの座標
-        if(Mathf.Abs(m_player.position.y - m_firstPosY) >= m_cameraMoveYBorder)
+        if (Mathf.Abs(m_player.position.y - m_firstPosY) >= m_cameraMoveYBorder)
         {
             //targetPos.y = m_player.position.y;
             targetPos.y = Mathf.Clamp(m_player.position.y, m_bottomPosY, m_topPosY);
@@ -85,6 +87,29 @@ public class GamePlayCameraScript : MonoBehaviour
         {
             targetPos.y = Mathf.Lerp(transform.position.y, m_firstPosY, Time.deltaTime * 2.0f);
         }
+
+
+        //タイマー加算
+        m_shakeTimer += Time.deltaTime;
+
+        //間隔が来たら揺れを設定する
+        if (m_shakeTimer > m_shakeinterval)
+        {
+            m_shakePower = m_shakeMaxPower;
+
+            //タイマーリセット
+            m_shakeTimer = 0;
+        }
+        else
+        {
+            //ターゲットの位置をランダムに揺らす
+            targetPos.x += Random.Range(-m_shakePower, m_shakePower);
+            targetPos.y += Random.Range(-m_shakePower, m_shakePower);
+
+            //揺れの強さを減衰
+            m_shakePower = Mathf.Lerp(m_shakePower, 0f, Time.deltaTime * 5f);
+        }
+
 
 
 
@@ -105,5 +130,10 @@ public class GamePlayCameraScript : MonoBehaviour
 
             //位置をカメラに反映
             transform.position = targetPos;
+    }
+     private void LateUpdate()
+    {
+
+    
     }
 }

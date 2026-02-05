@@ -4,16 +4,17 @@ using UnityEngine;
 
 
 /*
- * @brief 落下するタイルブロックのクラス
+ * @brief 一定時間後に消滅するオブジェクトのクラス
  * 
  * @auto 制作者　小塚太陽
  * 
- * @detail 落下するブロックのクラスです。やることは基本的にしばらくしたら消える処理負荷の軽減です
+ * @detail エフェクトや落下したブロックなど、一定時間後に消滅するオブジェクトの
+ * 　　　　クラスです。やることは基本的にしばらくしたら消える処理負荷の軽減です。
  * 
  * 
  * 
  */
-public class FallBlockController : MonoBehaviour
+public class FadeObjectController : MonoBehaviour
 {
 
     [SerializeField] float m_viewTime = 1.0f; ///< 表示時間（これを超えると消滅する）

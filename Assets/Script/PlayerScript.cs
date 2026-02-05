@@ -13,6 +13,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
+public enum ItemKinds
+{
+    NON,
+    TORCH,
+    OXYGEN_CYLINDER,
+    BALOON,
+}
+
 public class PlayerScript : MonoBehaviour 
 {
 // クラス定数の宣言 -------------------------------------------------
@@ -40,6 +48,9 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] GameObject m_slideDust;
     [SerializeField] float m_deadY;                  ///< プレイヤーが死亡するY座標
 
+    [SerializeField] private ItemKinds m_itemKind;   ///< プレイヤーの所持アイテム
+
+
     private Animator            m_animator; ///< アニメーター
     private Rigidbody2D         m_body2d;
     private Sensor_HeroKnight   m_groundSensor;
@@ -56,7 +67,7 @@ public class PlayerScript : MonoBehaviour
     private float               m_delayToIdle = 0.0f;
     private float               m_rollDuration = 8.0f / 14.0f;
     private float               m_rollCurrentTime;
-
+  
     // Use this for initialization
     void Start ()
     {
@@ -384,4 +395,6 @@ public class PlayerScript : MonoBehaviour
         //スコア加算
         AddScore(treasure.GetScore());
     }
+
+    public ItemKinds GetItem() { return m_itemKind; }
 }
