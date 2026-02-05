@@ -198,6 +198,7 @@ MonoBehaviour:
   m_logoSprites:
   - {fileID: 4798243980687864409, guid: 36de8da7589f6da49ad50d9c3440fb25, type: 3}
   - {fileID: -8006477838760958662, guid: 793f11880f67b144ba99a91ec352d78a, type: 3}
+  - {fileID: 325158704239918098, guid: e34b3c241efd4ca41937cb4603a875c7, type: 3}
 --- !u!212 &1125686309
 SpriteRenderer:
   m_ObjectHideFlags: 0
