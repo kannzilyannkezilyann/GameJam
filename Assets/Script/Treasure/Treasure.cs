@@ -37,10 +37,6 @@ public class Treasure : MonoBehaviour
     private int m_id;
     //æ“¾‚ÌŒø‰Ê‰¹
     [SerializeField] private GameObject m_getSE;
-    //ID
-    private int m_id;
-    //æ“¾‚ÌŒø‰Ê‰¹
-    [SerializeField] private GameObject m_getSE;
     // ƒƒ“ƒoŠÖ”‚Ì’è‹` -------------------------------------------------
     /**
      * @brief ¶¬ˆ—

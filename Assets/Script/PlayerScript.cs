@@ -49,8 +49,6 @@ public class PlayerScript : MonoBehaviour
     int m_score = 0;
     //入手宝配列
     public List<GameObject> m_takeTresures ;
-    //宝管理クラス
-    [SerializeField] TreasureManager m_treasureManager;
     //false：タイトル用　true：ゲーム用
     [SerializeField] bool m_flag;
     ///死亡した時に遷移するシーン
@@ -230,7 +228,7 @@ public class PlayerScript : MonoBehaviour
         }
 
         //移動モーション
-        else if (Mathf.Abs(inputX) > Mathf.Epsilon)
+        else if (Mathf.Abs(inputX) > Mathf.Epsilon && m_grounded)
         {
             // Reset timer
             m_delayToIdle = 0.05f;
