@@ -53,10 +53,10 @@ public class PlayerOperate : MonoBehaviour
         //最初のステージでハイスコアがなければオープンする
         if (GameManager.instance.GetStageName() == GameManager.FIRST_STAGE)
         {
-            if(GameManager.instance.GetHighScore(GameManager.instance.GetStageName()) == 0)
-            {
-                m_isOpenClose = true;
-            }
+            //if(GameManager.instance.GetHighScore(GameManager.instance.GetStageName()) == 0)
+            //{
+            //    m_isOpenClose = true;
+            //}
         }
     }
 
