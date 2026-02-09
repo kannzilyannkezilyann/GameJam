@@ -24,6 +24,8 @@ public class StageDestroyer : MonoBehaviour
 
     [SerializeField] GameObject m_fallTileBlock; ///< 呼び出す落下オブジェクト
 
+    [SerializeField] AudioSource? m_audio; ///< オーディオソース
+
     int m_currentDestroyColumn = 0; ///< 既に破壊した列数（左からのオフセット）
     int m_globalMinX = int.MaxValue; ///< 崩すタイルマップの中で最小のX
     int m_globalMaxX = int.MinValue; ///< 崩すタイルマップの中で最大のX
@@ -81,6 +83,10 @@ public class StageDestroyer : MonoBehaviour
                 m_currentDestroyColumn++;
             }
 
+            //オーディオ再生
+            m_audio.Play(); 
+
+            //タイマーリセット
             m_timer = 0f;
         }
     }

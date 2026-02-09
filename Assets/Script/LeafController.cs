@@ -19,33 +19,29 @@ using static UnityEditor.PlayerSettings;
 
 public class LeafController : MonoBehaviour
 {
-
     [SerializeField] Tilemap m_tileMap; ///< 葉っぱのタイルマップ
 
     [SerializeField] private GameObject m_player; ///< プレイヤー
 
-    [SerializeField] private GameObject m_particle; ///< パーティクル
+    [SerializeField] private GameObject m_effect; ///< 燃やした時のエフェクト
 
     [SerializeField] private float m_burnRange = 0.01f; ///< 燃える射程
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-       
-    }
-
+    /*
+     *
+     * @brief 当たり判定に当たった時の処理
+     * 
+     * @param[in] collision 当たったもののコリジョン
+     * 
+     * @return なし
+     * 
+     */
     private void OnCollisionEnter2D(Collision2D collision)
     {
         //タイルマップがなければ何もせず終了
         if (!m_tileMap)
         {
-            Debug.Log("何もない");
+            Debug.Log("タイルマップが存在しません");
             return;
 
         }
@@ -53,7 +49,7 @@ public class LeafController : MonoBehaviour
         //松明を持ってなかったら何もしない
         if (m_player.GetComponent<PlayerScript>().GetItem() != ItemKinds.TORCH)
         {
-            Debug.Log("松明じゃない");
+            Debug.Log("松明を持っていませんでした");
             return;
         }
 
@@ -71,16 +67,13 @@ public class LeafController : MonoBehaviour
         Vector3 max = playerBounds.max + new Vector3(m_burnRange, m_burnRange, 0);
 
         //セル座標に変換し、これで調べる
-        Vector3Int minCell = m_tileMap.WorldToCell(min);
-        Vector3Int maxCell = m_tileMap.WorldToCell(max);
-
-        //それを元にプレイヤーのいるセルを取得
-        //Vector3Int playerCell = m_tileMap.WorldToCell(playerPos);
+        Vector3Int playerMinCell = m_tileMap.WorldToCell(min);
+        Vector3Int playerMaxCell = m_tileMap.WorldToCell(max);
 
 
-        for (int x = minCell.x; x <= maxCell.x; x++)
+        for (int x = playerMinCell.x; x <= playerMaxCell.x; x++)
         {
-            for (int y = minCell.y; y <= maxCell.y; y++)
+            for (int y = playerMinCell.y; y <= playerMaxCell.y; y++)
             {
                 //調べるタイルの位置を取得
                 Vector3Int checkPos = new Vector3Int(x, y, 0);
@@ -88,16 +81,13 @@ public class LeafController : MonoBehaviour
                 //そこにタイルがあればそれを燃やす
                 if (m_tileMap.HasTile(checkPos))
                 {
-                    //パーティクルがあれば出す
-                    if (m_particle)
-                    {
-                        //まずはエフェクト生成
-                        GameObject fireParticle = Instantiate(m_particle,m_tileMap.GetCellCenterWorld(checkPos),Quaternion.identity);
-
-                        Debug.Log($"燃やしたタイル: x={x}, y={y}");
+                    //エフェクトがあれば生成
+                    if (m_effect)
+                    {                      
+                        GameObject fireParticle = Instantiate(m_effect,m_tileMap.GetCellCenterWorld(checkPos),Quaternion.identity);
                     }
 
-                    //あったタイルは消滅させる
+                    //燃やした場所にあったタイルは消滅させる
                     m_tileMap.SetTile(checkPos, null);
                 }
             }
