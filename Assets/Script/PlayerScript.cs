@@ -27,7 +27,15 @@ public class PlayerScript : MonoBehaviour
         WALK,
         JUMP,
         LANFING,
-        THROW_TREASURE
+        THROW_TREASURE,
+        SWIM
+    }
+
+    public enum PlayerMode
+    {
+        GAME_PLAY,
+        TITLE,
+        ITEM_SELECT,
     }
 
     [System.Serializable]
@@ -41,16 +49,26 @@ public class PlayerScript : MonoBehaviour
     public const float PLAYER_WIEGHT = 100.0f;
 
     // データメンバの宣言 -----------------------------------------------
+    [SerializeField] private float m_deadTime = 20.0f;
+    float m_currentTime = 0.0f;
+    //足元の判定
+    [SerializeField] private Collider2D m_footCollider;
+    bool m_isFootHit = false;
+    //頭の判定
+    [SerializeField] private Collider2D m_headCollider;
+    bool m_isHeadHit = false;
     //SE群
     [SerializeField] private Soundes[] m_soundes;
+    //プレイヤーのモード
+    [SerializeField] private PlayerMode m_playerMode;
     //現在の重さ
     float m_mass = 100.0f;
+    //軽減分
+    float m_minusMass;
     //合計スコア
     int m_score = 0;
     //入手宝配列
     public List<GameObject> m_takeTresures ;
-    //false：タイトル用　true：ゲーム用
-    [SerializeField] bool m_flag;
     ///死亡した時に遷移するシーン
     [SerializeField] private string m_deadScene; 
 
@@ -80,6 +98,8 @@ public class PlayerScript : MonoBehaviour
     private float               m_delayToIdle = 0.0f;
     private float               m_rollDuration = 8.0f / 14.0f;
     private float               m_rollCurrentTime;
+
+
   
     // Use this for initialization
     void Start ()
@@ -99,10 +119,20 @@ public class PlayerScript : MonoBehaviour
         {
             if (m_soundes[i].audioSource == null) m_soundes[i].audioSource = GetComponent<AudioSource>();
         }//初期化
-        m_itemKind = ItemKinds.NON;
 
         TreasureManager.instance.UnRegisterTreasure();
         TreasureManager.instance.ResetID();
+
+        m_currentTime = m_deadTime;
+
+        if(m_itemKind == ItemKinds.BALOON)
+        {
+            m_minusMass = -300.0f;
+        }
+        else
+        {
+            m_minusMass = 0.0f;
+        }
     }
 
     // Update is called once per frame
@@ -137,7 +167,7 @@ public class PlayerScript : MonoBehaviour
 
         // -- Handle input and movement --
         float inputX = Input.GetAxis("Horizontal");
-        if (!m_flag)
+        if (m_playerMode == PlayerMode.TITLE)
         {
             inputX = 1.0f;
         }
@@ -154,79 +184,65 @@ public class PlayerScript : MonoBehaviour
             m_facingDirection = -1;
         }
 
-        float speedIndex = 1 / (m_mass / 100.0f);
+        float massIndex = m_mass + m_minusMass;
+        if (massIndex <= 0.0f)
+        {
+            massIndex = 0.0f;
+        }
+        float calcMass = Mathf.Max(m_mass + m_minusMass, 0.0f);
+        float speedIndex = 1.0f / Mathf.Max(calcMass / 100.0f, 1.0f);
         // 移動
         if (!m_rolling )
             m_body2d.velocity = new Vector2(inputX * m_speed * speedIndex, m_body2d.velocity.y);
 
+        if (m_playerMode == PlayerMode.TITLE)
+        {
+            //画面端に行ったら戻る
+            if (m_body2d.position.x >= 8.0f)
+            {
+                m_body2d.position = new Vector2(-8.0f, m_body2d.position.y);
+            }
+
+        }
+
         //Set AirSpeed in animator
         m_animator.SetFloat("AirSpeedY", m_body2d.velocity.y);
 
-        // -- Handle Animations --
-        //Wall Slide
-        //m_isWallSliding = (m_wallSensorR1.State() && m_wallSensorR2.State()) || (m_wallSensorL1.State() && m_wallSensorL2.State());
-        //m_animator.SetBool("WallSlide", m_isWallSliding);
-
-        //Death
-        //if (Input.GetKeyDown("e") && !m_rolling)
-        //{
-        //    m_animator.SetBool("noBlood", m_noBlood);
-        //    m_animator.SetTrigger("Death");
-        //}
-            
-        //Hurt
-        //else if (Input.GetKeyDown("q") && !m_rolling)
-        //    m_animator.SetTrigger("Hurt");
-
-        //Attack
-        //if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f && !m_rolling && m_flag)
-        //{
-        //    m_currentAttack++;
-
-        //    // Loop back to one after third attack
-        //    if (m_currentAttack > 3)
-        //        m_currentAttack = 1;
-
-        //    // Reset Attack combo if time since last attack is too large
-        //    if (m_timeSinceAttack > 1.0f)
-        //        m_currentAttack = 1;
-
-        //    // Call one of three attack animations "Attack1", "Attack2", "Attack3"
-        //    m_animator.SetTrigger("Attack" + m_currentAttack);
-
-        //    // Reset timer
-        //    m_timeSinceAttack = 0.0f;
-        //}
-
-        // Block
-        //else if (Input.GetMouseButtonDown(1) && !m_rolling && m_flag)
-        //{
-        //    m_animator.SetTrigger("Block");
-        //    m_animator.SetBool("IdleBlock", true);
-        //}
-
-        //else if (Input.GetMouseButtonUp(1) && m_flag)
-        //    m_animator.SetBool("IdleBlock", false);
-
-        // ローリング
-        //if (Input.GetKeyDown("left shift") && !m_rolling && !m_isWallSliding && m_flag)
-        //{
-        //    m_rolling = true;
-        //    m_animator.SetTrigger("Roll");
-        //    m_body2d.velocity = new Vector2(m_facingDirection * m_rollForce, m_body2d.velocity.y);
-        //}
-            
+        if (m_isHeadHit)
+        {
+            float index = 1;
+            if (m_itemKind == ItemKinds.OXYGEN_CYLINDER) index = 10.0f;
+            m_currentTime -= Time.deltaTime / index;
+        }
+        else
+        {
+            if(m_currentTime <= m_deadTime)
+                m_currentTime += Time.deltaTime;
+            else
+                m_currentTime = m_deadTime;
+        }
+        if(m_currentTime <= 0.0f)
+        {
+            OnDead();
+        }
 
         //ジャンプモーション
-        if (Input.GetKeyDown("space") && m_grounded && !m_rolling)
+        if ((Input.GetKeyDown("space") && m_playerMode != PlayerMode.TITLE) && (m_grounded || m_isFootHit) || (Input.GetKeyDown(KeyCode.UpArrow) && m_playerMode == PlayerMode.TITLE && m_grounded))
         {
+            if(m_playerMode == PlayerMode.ITEM_SELECT) return;
             m_animator.SetTrigger("Jump");
             m_grounded = false;
             m_animator.SetBool("Grounded", m_grounded);
             m_body2d.velocity = new Vector2(m_body2d.velocity.x, m_jumpForce * speedIndex);
             m_groundSensor.Disable(0.2f);
-
-            m_soundes[(int)SoundKinds.JUMP].audioSource.PlayOneShot(m_soundes[(int)SoundKinds.JUMP].SE);
+            if (m_isFootHit)
+            {
+                m_soundes[(int)SoundKinds.SWIM].audioSource.PlayOneShot(m_soundes[(int)SoundKinds.SWIM].SE);
+            }
+            else
+            {
+                m_soundes[(int)SoundKinds.JUMP].audioSource.PlayOneShot(m_soundes[(int)SoundKinds.JUMP].SE);
+            }
             m_soundes[(int)SoundKinds.WALK].audioSource.Pause();
         }
 
@@ -258,7 +274,7 @@ public class PlayerScript : MonoBehaviour
         }
 
         //宝を捨てる
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) && m_playerMode == PlayerMode.GAME_PLAY)
         {
             m_soundes[(int)SoundKinds.THROW_TREASURE].audioSource.PlayOneShot(m_soundes[(int)SoundKinds.THROW_TREASURE].SE);
             ThrowTreasure();
@@ -268,6 +284,15 @@ public class PlayerScript : MonoBehaviour
         if(this.transform.position.y < m_deadY)
         {
             OnDead();
+        }
+
+        if (m_isFootHit)
+        {
+            m_body2d.gravityScale = 0.5f;
+        }
+        else
+        {
+            m_body2d.gravityScale = 1.0f;
         }
     }
 
@@ -321,6 +346,7 @@ public class PlayerScript : MonoBehaviour
             //宝の座標をプレイヤーと同じに
             last.transform.position = gameObject.transform.position + new Vector3(m_facingDirection * 0.5f* gameObject.transform.localScale.x, 1.5f*gameObject.transform.localScale.y, 0.0f) ;
             last.SetActive(true);
+            last.GetComponent<Rigidbody2D>().gravityScale = 1.0f;
             //向いている方向に飛ばす
             last.GetComponent<Rigidbody2D>().AddForce(new Vector2(m_facingDirection*200.0f, 90.0f));
             //プレイヤー判定オフ
@@ -339,8 +365,8 @@ public class PlayerScript : MonoBehaviour
     void OnDead()
     {
         //シーンに切り替わる前にプレイヤーのデータを受け渡す
-        GameManager.instance.SetCurrentScore(GetScore());
         Debug.Log(GetScore());
+        m_takeTresures.Clear();
 
         //ゴールしたらシーン遷移(nullの場合はデバッグ用ログを出すだけ)
         if (m_deadScene != null) SceneManager.LoadScene(m_deadScene, LoadSceneMode.Single);
@@ -380,7 +406,8 @@ public class PlayerScript : MonoBehaviour
     */
     public float GetMass()
     {
-        return m_mass;
+        float massIndex = Mathf.Max(m_mass + m_minusMass, 0.0f);
+        return massIndex + PLAYER_WIEGHT;
     }
 
     /**
@@ -450,4 +477,55 @@ public class PlayerScript : MonoBehaviour
         }
     }
     public ItemKinds GetItem() { return m_itemKind; }
+
+    /**
+    * @brief 水との判定処理
+    *
+    * @param[in] なし
+    *
+    * @return なし
+    */
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (m_footCollider == null) return;
+        if (m_headCollider == null) return;
+
+        if(other.CompareTag("NotWater"))
+        {
+            m_isFootHit = false;
+            m_isHeadHit = false;
+        }
+
+        if (!other.CompareTag("Water")) return;
+
+        Debug.Log("HIT!!!!");
+        m_isFootHit = true;
+        m_isHeadHit = true;
+    }
+
+    /**
+    * @brief 水との判定処理
+    *
+    * @param[in] なし
+    *
+    * @return 頭とヒットしているかどうか
+    */
+    public bool GetHeadHit()
+    {
+        return m_isHeadHit;
+    }
+
+    /**
+    * @brief ゲージに渡すレート
+    *
+    * @param[in] なし
+    *
+    * @return レート
+    */
+    public float GetLate()
+    {
+        return m_currentTime / m_deadTime;
+    }
+
+
 }

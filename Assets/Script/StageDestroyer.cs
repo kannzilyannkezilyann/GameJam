@@ -95,7 +95,7 @@ public class StageDestroyer : MonoBehaviour
         foreach (var tileMap in m_tileMaps)
         {
             // 範囲内にいなければスキップして次へ
-            if (globalX < tileMap.cellBounds.xMin) continue;
+            //if (globalX < tileMap.cellBounds.xMin) continue;
 
             // そのX列の上から下まで全て破壊する
             for (int y = tileMap.cellBounds.yMin; y < tileMap.cellBounds.yMax; y++)

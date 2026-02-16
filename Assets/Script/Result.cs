@@ -21,6 +21,10 @@ using UnityEngine.SceneManagement;
 public class Result : MonoBehaviour
 {
     // データメンバの宣言 -----------------------------------------------
+    //お金のSE
+    [SerializeField] private AudioClip m_moneySE;
+    //SEを再生するためのコンポーネント
+    [SerializeField] private AudioSource m_audioSource;
     //遷移先のシーン
     [SerializeField] private string m_scene;
     //スコアテキスト
@@ -62,6 +66,8 @@ public class Result : MonoBehaviour
         nextMoveText.transform.SetParent(m_canvas.transform, false);
         //「ハイスコア」テキストを非表示
         m_highScoreText.SetActive(false);
+
+        if(m_audioSource == null) m_audioSource = GetComponent<AudioSource>();
 
         StartCoroutine(SpawnTreasuresCoroutine());
     }
@@ -122,6 +128,12 @@ public class Result : MonoBehaviour
             treasure.transform.localScale = data[key].scale;
             treasure.AddComponent<BurstCoin>().Initialize(data[key].score,m_coin);
             m_countUpText.AddStopNumber(data[key].score);
+            Debug.Log("生成!");
+            m_audioSource.PlayOneShot(m_moneySE);
+            if (m_moneySE == null)
+            {
+                Debug.Log("nullやで");
+            }
             // 1秒待機
             yield return new WaitForSeconds(0.1f);
         }

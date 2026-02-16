@@ -20,7 +20,7 @@ public class BurstCoin : MonoBehaviour
 {
 // クラス定数の宣言 -------------------------------------------------
     //一コイン生成するためのスコア
-    const int SCORE_TO_COIN_RATE = 30;
+    const int SCORE_TO_COIN_RATE = 150;
     //宝がコインに変わるまで
     const float TREASURE_BURST = 1.2f;
     // データメンバの宣言 -----------------------------------------------

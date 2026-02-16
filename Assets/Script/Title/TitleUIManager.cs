@@ -119,8 +119,8 @@ public class TitleUIManager : MonoBehaviour
             }
         }
 
-        //エンターキーが押されたタイミングで現在選択されている番号に応じた処理をする
-        if (Input.GetKeyDown(KeyCode.Return))
+        //スペースキーが押されたタイミングで現在選択されている番号に応じた処理をする
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             m_selected = true;
             StartCoroutine(ChoiceCoroutine());

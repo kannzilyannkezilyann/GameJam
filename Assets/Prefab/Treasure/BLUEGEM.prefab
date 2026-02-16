@@ -122,8 +122,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85de3aea8e4f29348a4ba3b2119f889d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_weight: 9.8
-  m_score: 100
+  m_masterID: 0
+  m_weight: 10
+  m_score: 500
   m_destroyEffect: {fileID: 7331985587958883607, guid: a9fa427f26f598640a009f1200942a58, type: 3}
   m_destroyEffectScale: 9.96
   m_scoreText: {fileID: 7968831517195487150, guid: d867645a35f21054aa8090577e00dfff, type: 3}
@@ -143,7 +144,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
